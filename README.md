@@ -22,3 +22,5 @@ Prever a erosão silenciosa de receita no segmento Mid-Market da Kovan Technolog
 ## Como Executar
 pip install -r requirements.txt
 python main.py
+
+ATENÇÂO: Colocar o arquivo: datasets_case_modulo2_5yrs.xlsx dentros da pasta: data - Ele é maior que os 50mb max permitido pelo GH.
