@@ -1,0 +1,8 @@
+Teste de Robustez,Acurácia,Precisão (Churn),Recall (Churn),F1-Score (Churn)
+Baseline (Todas as Features),72.94%,35.44%,40.45%,37.78%
+Sem 'receita_total',68.32%,35.93%,71.43%,47.81%
+Sem 'pct_receita_servicos',67.48%,26.51%,33.91%,29.76%
+Sem 'qtde_pedidos',71.82%,32.61%,36.32%,34.36%
+Sem 'foco_em_servicos',72.80%,35.05%,39.76%,37.26%
+Apenas Features de Receita,71.33%,31.42%,34.77%,33.01%
+Apenas Frequência e Mix,67.97%,30.68%,45.78%,36.74%
