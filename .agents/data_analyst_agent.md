@@ -7,8 +7,3 @@ O **Agente Analista de Dados** é responsável pela ingestão, auditoria, consol
 3. **Dataset 3 (Engajamento Comercial CRM)**: Frequência de contatos do Account Manager, dias sem interação, oportunidades abertas e ganhas.
 4. **Dataset 4 (Atributos Firmográficos)**: Segmento, indústria, país, tempo de relacionamento (*tenure*) e canal de aquisição.
 5. **raw data (Linhas de Pedido Brutas)**: Detalhe das faturas por SKU, tipo de processador, OS e família de produto.
-
-## Diretrizes de Execução
-- Garantir a reconciliação temporal correta entre formatos de período mensais (`YYYY-MM`) e trimestrais (`YYYY-Q`).
-- Tratar dados ausentes sem vazamento de informação (*data leakage*).
-- Validar se a base consolidada atende aos filtros de segmento (Mid-Market, Strategic Accounts, Global Accounts).
