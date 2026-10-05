@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1168 300"
+     class="diagrama-aula06" role="img" aria-label="Precisão: acertos sobre tudo que o modelo marcou, 75,8%">
+  <text class="eixo" x="250" y="26">O QUE ACONTECEU DE VERDADE</text>
+  <text class="cabecalho" x="370" y="60" text-anchor="middle">Perdeu a conta</text>
+  <text class="cabecalho" x="622" y="60" text-anchor="middle">Seguiu comprando</text>
+  <text class="eixo" x="16" y="26">O QUE O MODELO DISSE</text>
+  <text class="cabecalho" x="230" y="119" text-anchor="end">Marcou</text>
+  <text class="cabecalho" x="230" y="209" text-anchor="end">Não marcou</text>
+  <g class="celula acerto">
+    <rect x="250" y="74" width="240" height="78" rx="10"/>
+    <text class="sigla" x="266" y="96">VP · Verdadeiro positivo</text>
+    <text class="valor" x="266" y="126">2.018<tspan class="unidade" dx="8">contas</tspan></text>
+    <text class="legenda" x="266" y="144">marcadas, e se perderam</text>
+  </g>
+  <g class="celula">
+    <rect x="502" y="74" width="240" height="78" rx="10"/>
+    <text class="sigla" x="518" y="96">FP · Falso positivo</text>
+    <text class="valor" x="518" y="126">643<tspan class="unidade" dx="8">contas</tspan></text>
+    <text class="legenda" x="518" y="144">marcadas, e continuaram</text>
+  </g>
+  <g class="celula">
+    <rect x="250" y="164" width="240" height="78" rx="10"/>
+    <text class="sigla" x="266" y="186">FN · Falso negativo</text>
+    <text class="valor" x="266" y="216">438<tspan class="unidade" dx="8">contas</tspan></text>
+    <text class="legenda" x="266" y="234">não marcadas, e se perderam</text>
+  </g>
+  <g class="celula acerto">
+    <rect x="502" y="164" width="240" height="78" rx="10"/>
+    <text class="sigla" x="518" y="186">VN · Verdadeiro negativo</text>
+    <text class="valor" x="518" y="216">1.609<tspan class="unidade" dx="8">contas</tspan></text>
+    <text class="legenda" x="518" y="234">não marcadas, e continuaram</text>
+  </g>
+  <text class="legenda" x="806" y="268">Positivo e negativo dizem o que o modelo falou.</text>
+  <text class="legenda" x="806" y="288">Verdadeiro e falso dizem se ele acertou.</text>
+  <g class="fragment">
+    <rect class="realce-den" x="243" y="67" width="254" height="92" rx="12"/>
+    <rect class="realce-den" x="495" y="67" width="254" height="92" rx="12"/>
+    <text class="rotulo-den" x="16" y="268">Denominador: a linha de cima, tudo que o modelo marcou</text>
+  </g>
+  <g class="fragment">
+    <rect class="realce-num" x="248" y="72" width="244" height="82" rx="12"/>
+    <text class="rotulo-num" x="16" y="290">Numerador: VP, as contas marcadas que estavam mesmo se perdendo</text>
+  </g>
+  <g class="painel fragment">
+    <rect x="806" y="74" width="346" height="168" rx="10"/>
+    <text class="formula" x="826" y="106">VP dividido por (VP + FP)</text>
+    <text class="conta" x="826" y="132">2.018 / 2.661</text>
+    <text class="legenda" x="826" y="154">acertos divididos por tudo que foi marcado</text>
+    <text class="resultado" x="826" y="196">75,8%</text>
+    <text class="resultado-rotulo" x="826" y="222">PRECISÃO</text>
+  </g>
+</svg>

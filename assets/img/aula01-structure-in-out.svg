@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1168 334" width="1168" height="334"
+     font-family="Manrope, 'Helvetica Neue', Arial, sans-serif" role="img"
+     aria-label="Os cinco elementos de um prompt de análise e o modo de falha de cada ausência">
+  <defs>
+    <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e2640"/>
+    </marker>
+  </defs>
+  <rect width="1168" height="334" fill="#ffffff"/>
+  
+  <rect x="0" y="2" width="470" height="58" rx="8" fill="#e6eaeb" stroke="#2e2640" stroke-opacity="0.25"/>
+  <text x="22" y="32" font-size="25" font-weight="600" fill="#2e2640">Papel</text>
+  <text x="22" y="59" font-size="19" fill="#2e2640">analista de revenue analytics</text>
+  <path d="M 486 38 L 566 38" fill="none" stroke="#2e2640" stroke-width="2.5"
+        marker-end="url(#seta)"/>
+  <rect x="590" y="18" width="4" height="40" fill="#ff4545"/>
+  <text x="608" y="35" font-size="16" fill="#2e2640" letter-spacing="0.06em">SEM ISSO</text>
+  <text x="608" y="59" font-size="22" fill="#2e2640">resposta de consultor genérico</text>
+  <rect x="0" y="68" width="470" height="58" rx="8" fill="#e6eaeb" stroke="#2e2640" stroke-opacity="0.25"/>
+  <text x="22" y="98" font-size="25" font-weight="600" fill="#2e2640">Schema</text>
+  <text x="22" y="125" font-size="19" fill="#2e2640">as 20 colunas, coladas no prompt</text>
+  <path d="M 486 104 L 566 104" fill="none" stroke="#2e2640" stroke-width="2.5"
+        marker-end="url(#seta)"/>
+  <rect x="590" y="84" width="4" height="40" fill="#ff4545"/>
+  <text x="608" y="101" font-size="16" fill="#2e2640" letter-spacing="0.06em">SEM ISSO</text>
+  <text x="608" y="125" font-size="22" fill="#2e2640">coluna que não existe</text>
+  <rect x="0" y="134" width="470" height="58" rx="8" fill="#e6eaeb" stroke="#2e2640" stroke-opacity="0.25"/>
+  <text x="22" y="164" font-size="25" font-weight="600" fill="#2e2640">Recorte</text>
+  <text x="22" y="191" font-size="19" fill="#2e2640">segmento, janela, agrupamento</text>
+  <path d="M 486 170 L 566 170" fill="none" stroke="#2e2640" stroke-width="2.5"
+        marker-end="url(#seta)"/>
+  <rect x="590" y="150" width="4" height="40" fill="#ff4545"/>
+  <text x="608" y="167" font-size="16" fill="#2e2640" letter-spacing="0.06em">SEM ISSO</text>
+  <text x="608" y="191" font-size="22" fill="#2e2640">média da base inteira</text>
+  <rect x="0" y="200" width="470" height="58" rx="8" fill="#e6eaeb" stroke="#2e2640" stroke-opacity="0.25"/>
+  <text x="22" y="230" font-size="25" font-weight="600" fill="#2e2640">Formato</text>
+  <text x="22" y="257" font-size="19" fill="#2e2640">a tabela que você espera de volta</text>
+  <path d="M 486 236 L 566 236" fill="none" stroke="#2e2640" stroke-width="2.5"
+        marker-end="url(#seta)"/>
+  <rect x="590" y="216" width="4" height="40" fill="#ff4545"/>
+  <text x="608" y="233" font-size="16" fill="#2e2640" letter-spacing="0.06em">SEM ISSO</text>
+  <text x="608" y="257" font-size="22" fill="#2e2640">prosa, sem número</text>
+  <rect x="0" y="266" width="470" height="58" rx="8" fill="#e6eaeb" stroke="#2e2640" stroke-opacity="0.25"/>
+  <text x="22" y="296" font-size="25" font-weight="600" fill="#2e2640">Restrição</text>
+  <text x="22" y="323" font-size="19" fill="#2e2640">não estimar o que não existe</text>
+  <path d="M 486 302 L 566 302" fill="none" stroke="#2e2640" stroke-width="2.5"
+        marker-end="url(#seta)"/>
+  <rect x="590" y="282" width="4" height="40" fill="#ff4545"/>
+  <text x="608" y="299" font-size="16" fill="#2e2640" letter-spacing="0.06em">SEM ISSO</text>
+  <text x="608" y="323" font-size="22" fill="#2e2640">número plausível sem origem</text>
+</svg>

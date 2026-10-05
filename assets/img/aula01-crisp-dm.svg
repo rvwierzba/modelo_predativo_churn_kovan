@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1168 334"
+     class="diagrama-ciclo" role="img" aria-label="CRISP-DM: as duas primeiras fases consomem 6 das 26 semanas">
+  <defs>
+    <marker id="ponta-crisp-dm" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="ponta" d="M 0 0 L 10 5 L 0 10 z"/>
+    </marker>
+  </defs>
+  <path class="arco" d="M 176 84 L 193 84" marker-end="url(#ponta-crisp-dm)"/>
+  <path class="arco" d="M 375 84 L 392 84" marker-end="url(#ponta-crisp-dm)"/>
+  <path class="arco" d="M 574 84 L 591 84" marker-end="url(#ponta-crisp-dm)"/>
+  <path class="arco" d="M 773 84 L 790 84" marker-end="url(#ponta-crisp-dm)"/>
+  <path class="arco" d="M 972 84 L 989 84" marker-end="url(#ponta-crisp-dm)"/>
+  <path class="arco retorno" d="M 1081 148 C 1081 296 86 296 86 152" marker-end="url(#ponta-crisp-dm)"/>
+  <g class="fase fragment destaque">
+    <rect x="0" y="26" width="172" height="116" rx="10"/>
+    <text class="fase-num" x="86" y="48" text-anchor="middle">01</text>
+    <text class="fase-titulo" x="86" y="66" text-anchor="middle">Entendimento do</text>
+    <text class="fase-titulo" x="86" y="90" text-anchor="middle">negócio</text>
+    <text class="fase-apoio" x="86" y="128" text-anchor="middle">S1</text>
+  </g>
+  <g class="fase fragment destaque">
+    <rect x="199" y="26" width="172" height="116" rx="10"/>
+    <text class="fase-num" x="285" y="48" text-anchor="middle">02</text>
+    <text class="fase-titulo" x="285" y="66" text-anchor="middle">Entendimento dos</text>
+    <text class="fase-titulo" x="285" y="90" text-anchor="middle">dados</text>
+    <text class="fase-apoio" x="285" y="128" text-anchor="middle">S1 a S3</text>
+  </g>
+  <g class="fase fragment">
+    <rect x="398" y="26" width="172" height="116" rx="10"/>
+    <text class="fase-num" x="484" y="48" text-anchor="middle">03</text>
+    <text class="fase-titulo" x="484" y="66" text-anchor="middle">Preparação dos</text>
+    <text class="fase-titulo" x="484" y="90" text-anchor="middle">dados</text>
+    <text class="fase-apoio" x="484" y="128" text-anchor="middle">S2 e S3</text>
+  </g>
+  <g class="fase fragment">
+    <rect x="597" y="26" width="172" height="116" rx="10"/>
+    <text class="fase-num" x="683" y="48" text-anchor="middle">04</text>
+    <text class="fase-titulo" x="683" y="66" text-anchor="middle">Modelagem</text>
+    <text class="fase-apoio" x="683" y="128" text-anchor="middle">S6</text>
+  </g>
+  <g class="fase fragment">
+    <rect x="796" y="26" width="172" height="116" rx="10"/>
+    <text class="fase-num" x="882" y="48" text-anchor="middle">05</text>
+    <text class="fase-titulo" x="882" y="66" text-anchor="middle">Avaliação</text>
+    <text class="fase-apoio" x="882" y="128" text-anchor="middle">S6 tarde</text>
+  </g>
+  <g class="fase fragment">
+    <rect x="995" y="26" width="172" height="116" rx="10"/>
+    <text class="fase-num" x="1081" y="48" text-anchor="middle">06</text>
+    <text class="fase-titulo" x="1081" y="66" text-anchor="middle">Implantação</text>
+    <text class="fase-apoio" x="1081" y="128" text-anchor="middle">S7 e S8</text>
+  </g>
+  <text class="centro-apoio" x="584" y="322"
+        text-anchor="middle">as duas primeiras fases consomem 6 das 26 semanas</text>
+</svg>

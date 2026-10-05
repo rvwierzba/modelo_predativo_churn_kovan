@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1168 300"
+     class="diagrama-aula06" role="img" aria-label="Esquema de subajuste e sobreajuste: o erro de treino cai sempre e o de validação volta a subir">
+  <path class="eixo-linha" d="M 150 46 L 150 244 L 794 244"/>
+  <text class="eixo" x="138" y="56" text-anchor="end">ERRO</text>
+  <text class="eixo" x="150" y="268">MODELO MAIS SIMPLES</text>
+  <text class="eixo" x="794" y="268" text-anchor="end">MODELO MAIS COMPLEXO</text>
+  <g class="fragment" data-fragment-index="1">
+    <path class="curva treino" d="M 150.0 73.6 L 165.8 80.9 L 181.5 86.3 L 197.2 91.2 L 213.0 95.7 L 228.8 100.0 L 244.5 104.2 L 260.2 108.2 L 276.0 112.1 L 291.8 115.9 L 307.5 119.6 L 323.2 123.2 L 339.0 126.8 L 354.8 130.3 L 370.5 133.8 L 386.2 137.2 L 402.0 140.6 L 417.8 143.9 L 433.5 147.2 L 449.2 150.4 L 465.0 153.7 L 480.8 156.9 L 496.5 160.0 L 512.2 163.1 L 528.0 166.2 L 543.8 169.3 L 559.5 172.4 L 575.2 175.4 L 591.0 178.4 L 606.8 181.4 L 622.5 184.3 L 638.2 187.3 L 654.0 190.2 L 669.8 193.1 L 685.5 196.0 L 701.2 198.9 L 717.0 201.7 L 732.8 204.6 L 748.5 207.4 L 764.2 210.2 L 780.0 213.0"/>
+    <text class="fluxo-apoio" x="800" y="217.99999999999997">erro no treino</text>
+  </g>
+  <g class="fragment" data-fragment-index="2">
+    <path class="curva validacao" d="M 150.0 73.6 L 165.8 80.0 L 181.5 86.0 L 197.2 91.7 L 213.0 97.0 L 228.8 101.9 L 244.5 106.4 L 260.2 110.6 L 276.0 114.4 L 291.8 117.8 L 307.5 120.9 L 323.2 123.6 L 339.0 125.9 L 354.8 127.8 L 370.5 129.4 L 386.2 130.6 L 402.0 131.4 L 417.8 131.9 L 433.5 131.9 L 449.2 131.6 L 465.0 131.0 L 480.8 129.9 L 496.5 128.5 L 512.2 126.8 L 528.0 124.6 L 543.8 122.1 L 559.5 119.2 L 575.2 115.9 L 591.0 112.3 L 606.8 108.3 L 622.5 103.9 L 638.2 99.1 L 654.0 94.0 L 669.8 88.5 L 685.5 82.6 L 701.2 76.4 L 717.0 69.8 L 732.8 62.8 L 748.5 55.4 L 764.2 47.7 L 780.0 39.6"/>
+    <text class="fluxo-titulo" x="800" y="44.59999999999998">erro na validação</text>
+  </g>
+  <g class="fragment" data-fragment-index="3">
+    <path class="marca-otimo" d="M 415 46 L 415 244"/>
+    <text class="zona-titulo" x="415" y="38" text-anchor="middle">onde o botão deve parar</text>
+  </g>
+  <g class="painel fragment" data-fragment-index="3">
+    <rect x="836" y="46" width="316" height="208" rx="10"/>
+    <text class="zona-titulo" x="856" y="76">À esquerda: subajuste</text>
+    <text class="zona-apoio" x="856" y="98">O modelo é simples demais e erra</text>
+    <text class="zona-apoio" x="856" y="116">nos dois conjuntos.</text>
+    <text class="zona-titulo" x="856" y="150">À direita: sobreajuste</text>
+    <text class="zona-apoio" x="856" y="172">Ele decora o treino e piora na</text>
+    <text class="zona-apoio" x="856" y="190">validação. A distância entre as</text>
+    <text class="zona-apoio" x="856" y="208">duas curvas é o sintoma.</text>
+    <text class="fluxo-marca" x="856" y="238">ESQUEMA, SEM ESCALA NUMÉRICA</text>
+  </g>
+</svg>

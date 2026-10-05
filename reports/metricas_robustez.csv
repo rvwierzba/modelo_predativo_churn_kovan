@@ -1,6 +1,0 @@
-Abordagem / Teste,Acurácia,Precisão,Recall,F1-Score,ROC-AUC
-New Architecture (XGBoost — Solution B Silent Erosion),93.09%,92.70%,99.13%,95.81%,0.9717
-New Architecture (LightGBM — Solution B Silent Erosion),92.57%,92.83%,98.26%,95.47%,0.9716
-Optimized Random Forest (Solution B Silent Erosion),91.36%,94.19%,95.01%,94.60%,0.9627
-Binary Rupture Model (Solution A Contract Loss),100.00%,100.00%,100.00%,100.00%,1.0000
-Legacy Baseline (Previous Script),72.94%,35.45%,40.10%,37.63%,0.6120

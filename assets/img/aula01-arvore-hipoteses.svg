@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1168 350" width="1168" height="350"
+     font-family="Manrope, 'Helvetica Neue', Arial, sans-serif" role="img"
+     aria-label="Árvore de hipóteses decompondo a queda do NRR em três componentes mutuamente exclusivos e quatro hipóteses testáveis">
+  <rect width="1168" height="350" fill="#ffffff"/>
+  <rect x="380" y="6" width="408" height="86" rx="8" fill="#2e2640"/>
+  <text x="406" y="38" font-size="21" font-weight="700" fill="#ffffff">Por que o NRR caiu de 109% para 93%?</text>
+  <text x="406" y="66" font-size="16" fill="#e6eaeb">a pergunta do Comitê de 3 de março</text>
+  
+  <path d="M 584 92 L 584 116 L 193 116 L 193 136" fill="none"
+        stroke="#2e2640" stroke-width="2"/>
+  <rect x="20" y="136" width="346" height="70" rx="8" fill="#ffffff"
+        stroke="#2e2640" stroke-width="1.6"/>
+  <text x="42" y="164" font-size="21" font-weight="600" fill="#2e2640">Menos expansão</text>
+  <text x="42" y="188" font-size="16" fill="#2e2640">contas que cresciam, cresceram menos</text>
+  <path d="M 584 92 L 584 116 L 579 116 L 579 136" fill="none"
+        stroke="#2e2640" stroke-width="2"/>
+  <rect x="406" y="136" width="346" height="70" rx="8" fill="#ffffff"
+        stroke="#066d73" stroke-width="3.5"/>
+  <text x="428" y="164" font-size="21" font-weight="600" fill="#2e2640">Mais contração</text>
+  <text x="428" y="188" font-size="16" fill="#2e2640">contas que ficaram, compraram menos</text>
+  <path d="M 584 92 L 584 116 L 965 116 L 965 136" fill="none"
+        stroke="#2e2640" stroke-width="2"/>
+  <rect x="792" y="136" width="346" height="70" rx="8" fill="#ffffff"
+        stroke="#2e2640" stroke-width="1.6"/>
+  <text x="814" y="164" font-size="21" font-weight="600" fill="#2e2640">Mais perda bruta</text>
+  <text x="814" y="188" font-size="16" fill="#2e2640">contas que, encerraram contrato</text>
+  <path d="M 579 206 L 579 230 L 147 230 L 147 252" fill="none"
+        stroke="#066d73" stroke-width="2"/>
+  <rect x="14" y="252" width="266" height="88" rx="8" fill="#e6eaeb"
+        stroke="#2e2640" stroke-width="1.4"/>
+  <text x="32" y="278" font-size="17" font-weight="600" fill="#2e2640">A contração se concentra</text>
+  <text x="32" y="299" font-size="17" font-weight="600" fill="#2e2640">em poucas contas</text>
+  <rect x="32" y="311" width="4" height="20" fill="#066d73"/>
+  <text x="46" y="327" font-size="16" fill="#066d73">receita_brl, segmento</text>
+  <path d="M 579 206 L 579 230 L 437 230 L 437 252" fill="none"
+        stroke="#066d73" stroke-width="2"/>
+  <rect x="304" y="252" width="266" height="88" rx="8" fill="#e6eaeb"
+        stroke="#2e2640" stroke-width="1.4"/>
+  <text x="322" y="278" font-size="17" font-weight="600" fill="#2e2640">A cadência de pedidos cai</text>
+  <text x="322" y="299" font-size="17" font-weight="600" fill="#2e2640">antes da receita</text>
+  <rect x="322" y="311" width="4" height="20" fill="#066d73"/>
+  <text x="336" y="327" font-size="16" fill="#066d73">pedidos, recencia_dias</text>
+  <path d="M 579 206 L 579 230 L 727 230 L 727 252" fill="none"
+        stroke="#066d73" stroke-width="2"/>
+  <rect x="594" y="252" width="266" height="88" rx="8" fill="#e6eaeb"
+        stroke="#2e2640" stroke-width="1.4"/>
+  <text x="612" y="278" font-size="17" font-weight="600" fill="#2e2640">A amplitude de mix se</text>
+  <text x="612" y="299" font-size="17" font-weight="600" fill="#2e2640">estreita durante a queda</text>
+  <rect x="612" y="311" width="4" height="20" fill="#066d73"/>
+  <text x="626" y="327" font-size="16" fill="#066d73">linhas_produto_ativas</text>
+  <path d="M 579 206 L 579 230 L 1017 230 L 1017 252" fill="none"
+        stroke="#066d73" stroke-width="2"/>
+  <rect x="884" y="252" width="266" height="88" rx="8" fill="#e6eaeb"
+        stroke="#2e2640" stroke-width="1.4"/>
+  <text x="902" y="278" font-size="17" font-weight="600" fill="#2e2640">A atividade no CRM cai</text>
+  <text x="902" y="299" font-size="17" font-weight="600" fill="#2e2640">porque o território trocou</text>
+  <rect x="902" y="311" width="4" height="20" fill="#066d73"/>
+  <text x="916" y="327" font-size="16" fill="#066d73">interacoes_crm, troca_de_am</text>
+</svg>

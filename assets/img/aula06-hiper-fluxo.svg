@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1168 300"
+     class="diagrama-aula06" role="img" aria-label="Onde o hiperparâmetro entra: ele é escolhido antes do ajuste, e a validação diz se a escolha foi boa">
+  <defs>
+    <marker id="ponta-hiper" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path class="ponta" d="M 0 0 L 10 5 L 0 10 z"/>
+    </marker>
+  </defs>
+  <g class="fluxo fragment" data-fragment-index="1">
+    <rect x="0" y="30" width="236" height="84" rx="10"/>
+    <text class="fluxo-marca" x="14" y="52">VEM DO DADO</text>
+    <text class="fluxo-titulo" x="14" y="76">Tabela de treino</text>
+    <text class="fluxo-apoio" x="14" y="98">3.295 contas</text>
+    <text class="fluxo-apoio" x="14" y="116">8 colunas fechadas em 2024-03</text>
+  </g>
+  <g class="fluxo fragment escolhido" data-fragment-index="2">
+    <rect x="0" y="150" width="236" height="84" rx="10"/>
+    <text class="fluxo-marca" x="14" y="172">VOCÊ ESCOLHE</text>
+    <text class="fluxo-titulo" x="14" y="196">Hiperparâmetros</text>
+    <text class="fluxo-apoio" x="14" y="218">força da regularização,</text>
+    <text class="fluxo-apoio" x="14" y="236">profundidade da árvore</text>
+  </g>
+  <path class="seta fragment" data-fragment-index="3" d="M 240 72 L 316 110" marker-end="url(#ponta-hiper)"/>
+  <path class="seta fragment" data-fragment-index="3" d="M 240 192 L 316 154" marker-end="url(#ponta-hiper)"/>
+  <g class="fluxo fragment" data-fragment-index="3">
+    <rect x="320" y="92" width="168" height="84" rx="10"/>
+    <text class="fluxo-titulo" x="334" y="124">Ajuste</text>
+    <text class="fluxo-apoio" x="334" y="146">o algoritmo roda</text>
+  </g>
+  <path class="seta fragment" data-fragment-index="4" d="M 492 134 L 556 134" marker-end="url(#ponta-hiper)"/>
+  <g class="fluxo fragment" data-fragment-index="4">
+    <rect x="560" y="92" width="236" height="84" rx="10"/>
+    <text class="fluxo-marca" x="574" y="114">O MODELO APRENDE</text>
+    <text class="fluxo-titulo" x="574" y="138">Parâmetros</text>
+    <text class="fluxo-apoio" x="574" y="160">8 coeficientes e o intercepto</text>
+    <text class="fluxo-apoio" x="574" y="178">saem do ajuste</text>
+  </g>
+  <path class="seta fragment" data-fragment-index="5" d="M 800 134 L 864 134" marker-end="url(#ponta-hiper)"/>
+  <g class="fluxo fragment" data-fragment-index="5">
+    <rect x="868" y="92" width="236" height="84" rx="10"/>
+    <text class="fluxo-titulo" x="882" y="124">Escore por conta</text>
+    <text class="fluxo-apoio" x="882" y="146">probabilidade entre 0 e 1</text>
+  </g>
+  <g class="fluxo fragment" data-fragment-index="6">
+    <rect x="868" y="206" width="236" height="62" rx="10"/>
+    <text class="fluxo-titulo" x="882" y="238">Validação</text>
+    <text class="fluxo-apoio" x="882" y="260">1.413 contas separadas</text>
+  </g>
+  <path class="seta fragment" data-fragment-index="6" d="M 986 180 L 986 202" marker-end="url(#ponta-hiper)"/>
+  <path class="seta retorno fragment" data-fragment-index="7" d="M 866 240 C 866 300 240 260 240 200" marker-end="url(#ponta-hiper)"/>
+  <text class="fluxo-apoio fragment" data-fragment-index="7" x="553" y="292" text-anchor="middle">a validação diz qual botão girar, e o ciclo recomeça</text>
+</svg>

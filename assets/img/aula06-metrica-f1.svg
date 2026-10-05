@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1168 300"
+     class="diagrama-aula06" role="img" aria-label="F1: 78,9% no limiar de 0,5 e 8,8% na fila de 138">
+  <text class="eixo" x="16" y="24">LIMIAR DE 0,5</text>
+  <g class="fragment">
+    <text class="barra-rotulo" x="290" y="54" text-anchor="end">Precisão</text>
+    <rect class="barra-fundo" x="300" y="36" width="420" height="26" rx="6"/>
+    <rect class="barra" x="300" y="36" width="318" height="26" rx="6"/>
+    <text class="barra-valor" x="736" y="54">75,8%</text>
+    <text class="barra-rotulo" x="290" y="88" text-anchor="end">Revocação</text>
+    <rect class="barra-fundo" x="300" y="70" width="420" height="26" rx="6"/>
+    <rect class="barra" x="300" y="70" width="345" height="26" rx="6"/>
+    <text class="barra-valor" x="736" y="88">82,2%</text>
+  </g>
+  <g class="fragment">
+    <text class="barra-rotulo" x="290" y="122" text-anchor="end">F1</text>
+    <rect class="barra-fundo" x="300" y="104" width="420" height="26" rx="6"/>
+    <rect class="barra" x="300" y="104" width="331" height="26" rx="6"/>
+    <text class="barra-valor" x="736" y="122">78,9%</text>
+    <text class="legenda" x="300" y="152">Com precisão e revocação parecidas, a média harmônica fica entre as duas.</text>
+  </g>
+  <text class="eixo" x="16" y="196">FILA DE 138 CONTAS</text>
+  <g class="fragment">
+    <text class="barra-rotulo" x="290" y="226" text-anchor="end">Precisão</text>
+    <rect class="barra-fundo" x="300" y="208" width="420" height="26" rx="6"/>
+    <rect class="barra" x="300" y="208" width="346" height="26" rx="6"/>
+    <text class="barra-valor" x="736" y="226">82,6%</text>
+    <text class="barra-rotulo" x="290" y="260" text-anchor="end">Revocação</text>
+    <rect class="barra-fundo" x="300" y="242" width="420" height="26" rx="6"/>
+    <rect class="barra baixa" x="300" y="242" width="19" height="26" rx="6"/>
+    <text class="barra-valor" x="736" y="260">4,6%</text>
+  </g>
+  <g class="painel fragment">
+    <rect x="806" y="190" width="346" height="90" rx="10"/>
+    <text class="formula" x="826" y="218">Média simples: 43,6%</text>
+    <text class="resultado" x="826" y="262">F1 8,8%</text>
+  </g>
+</svg>

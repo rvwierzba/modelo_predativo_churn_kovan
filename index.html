@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de retenção Kovan &middot; MBA Inteli x Lenovo</title>
+  <!--
+    Painel da Aula 08. Uma página, sem build: lê a planilha original do case,
+    treina o modelo no navegador (modelo.js), guarda os planos de ação de cada
+    área e conversa com uma equipe de três agentes no n8n.
+
+    Para criar a versão do grupo: a pasta frontend/ do repositório de prática
+    tem a mesma página pronta para abrir no Antigravity e modificar.
+
+    A planilha fica no navegador. Ao endpoint configurado vão só a fila do
+    ciclo, o resumo do modelo, os planos e o nome do modelo de linguagem.
+  -->
+  <link rel="stylesheet" href="./assets/vendor/fontes/fontes.css">
+  <link rel="stylesheet" href="./assets/css/inteli-brand.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--seg-superficie); color: var(--seg-texto); font-size: 16px; }
+    a { color: var(--seg-secundaria); }
+    header.topo {
+      background: var(--seg-primaria); color: var(--inteli-branco);
+      padding: 18px 32px 0; border-bottom: 4px solid var(--seg-destaque);
+    }
+    .topo-linha { display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap; max-width: 1320px; margin: 0 auto; }
+    header.topo h1 { margin: 0; font-size: 28px; color: var(--inteli-branco); }
+    header.topo p { margin: 0; font-size: 14px; }
+    /* Trilha dos quatro passos: cada um acende quando fica pronto. */
+    .trilha { max-width: 1320px; margin: 16px auto 0; overflow-x: auto; }
+    .trilha ol { display: flex; margin: 0; padding: 0; }
+    .trilha li { list-style: none; flex: 1; min-width: 150px; padding: 10px 14px 12px; font-size: 14px;
+                 border-top: 3px solid transparent; display: flex; gap: 10px; align-items: center; }
+    .trilha .n { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+                 border: 2px solid var(--inteli-branco); font-weight: 700; font-size: 13px; flex: none; transition: background .4s; }
+    .trilha li.feito { border-top-color: var(--seg-secundaria); }
+    .trilha li.feito .n { background: var(--seg-secundaria); border-color: var(--seg-secundaria); }
+    main { max-width: 1320px; margin: 0 auto; padding: 24px 16px 64px; display: flex; flex-direction: column; gap: 24px; }
+    .grid-principal { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 24px; }
+    @media (max-width: 1000px) { .grid-principal { grid-template-columns: 1fr; } }
+    .coluna { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+    section.bloco { background: var(--seg-base); border: 1px solid var(--seg-borda); padding: 20px 22px; }
+    .bloco h2 { margin: 0 0 4px; font-size: 21px; display: flex; gap: 12px; align-items: baseline; }
+    .bloco h2 .num { color: var(--seg-destaque); font-size: 15px; }
+    .bloco .ajuda { margin: 0 0 14px; font-size: 14px; line-height: 1.5; }
+    label { display: block; font-weight: 600; font-size: 14px; margin: 12px 0 6px; }
+    input[type=url], input[type=text], textarea, select {
+      width: 100%; font: inherit; color: var(--seg-texto); background: var(--seg-base);
+      border: 1px solid var(--seg-borda); padding: 10px 12px;
+    }
+    textarea { min-height: 110px; resize: vertical; font-size: 14px; line-height: 1.45; }
+    input:focus, textarea:focus, select:focus { outline: 2px solid var(--seg-secundaria); outline-offset: -1px; }
+    button, a.botao {
+      font: inherit; font-weight: 600; cursor: pointer; border: 0; padding: 10px 18px;
+      background: var(--seg-primaria); color: var(--inteli-branco); text-decoration: none;
+      display: inline-flex; gap: 8px; align-items: center;
+    }
+    button.secundario, a.botao { background: var(--seg-base); color: var(--seg-primaria); border: 1px solid var(--seg-primaria); }
+    button:disabled { cursor: not-allowed; background: var(--seg-borda); color: var(--seg-texto); }
+    .linha { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+    .status { font-size: 14px; }
+    .status.ok { color: var(--seg-secundaria); font-weight: 600; }
+    .status.erro { color: var(--seg-destaque); font-weight: 600; }
+    .material-symbols-outlined { font-size: 20px; }
+
+    /* 01: planilha */
+    .soltar { border: 2px dashed var(--seg-borda); padding: 22px; text-align: center; cursor: pointer; background: var(--seg-superficie); transition: border-color .2s, background .2s; }
+    .soltar:hover, .soltar.ativo { border-color: var(--seg-secundaria); background: var(--seg-base); }
+    .soltar strong { display: flex; justify-content: center; gap: 8px; align-items: center; font-size: 17px; margin-bottom: 4px; }
+    .etapas { list-style: none; padding: 0; margin: 14px 0 0; font-size: 14px; display: none; }
+    .etapas.visivel { display: block; }
+    .etapas li { display: flex; gap: 8px; align-items: center; padding: 3px 0; opacity: .45; transition: opacity .3s; }
+    .etapas li.ativa, .etapas li.feita { opacity: 1; }
+    .etapas li.ativa .material-symbols-outlined { animation: girar 1s linear infinite; }
+    .etapas li.feita .material-symbols-outlined { color: var(--seg-secundaria); }
+    input[type=number] { width: 100px; font: inherit; padding: 8px 10px; border: 1px solid var(--seg-borda); }
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+    @media (max-width: 560px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .kpi { border-left: 4px solid var(--seg-secundaria); background: var(--seg-superficie); padding: 10px 12px; animation: subir .5s both; }
+    .kpi:nth-child(2) { animation-delay: .08s; } .kpi:nth-child(3) { animation-delay: .16s; } .kpi:nth-child(4) { animation-delay: .24s; }
+    .kpi .v { font-size: 24px; font-weight: 500; margin: 0; white-space: nowrap; }
+    .kpi .r { font-size: 13px; margin: 2px 0 0; }
+    details summary { cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 14px; }
+    .pesos { display: grid; grid-template-columns: max-content 1fr max-content; gap: 6px 10px; align-items: center; font-size: 13px; margin-top: 10px; }
+    .pesos .barra { height: 10px; background: var(--seg-superficie); position: relative; }
+    .pesos .barra span { position: absolute; top: 0; height: 10px; transition: width .8s ease-out; }
+    .pesos .barra span.mais { left: 50%; background: var(--seg-destaque); }
+    .pesos .barra span.menos { right: 50%; background: var(--seg-secundaria); }
+    .pesos .barra::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; border-left: 1px solid var(--seg-texto); }
+    .tabela-rolagem { overflow-x: auto; margin-top: 14px; max-height: 320px; overflow-y: auto; }
+    table { border-collapse: collapse; width: 100%; font-size: 13px; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--seg-borda); white-space: nowrap; }
+    th { position: sticky; top: 0; background: var(--seg-primaria); color: var(--inteli-branco); font-weight: 600; }
+    td.n { text-align: right; font-variant-numeric: tabular-nums; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover td { background: var(--seg-superficie); }
+    tr.perdida td:first-child { border-left: 4px solid var(--seg-destaque); }
+    .legenda { font-size: 12px; margin: 6px 0 0; }
+
+    /* 02: planos */
+    .abas { display: flex; border-bottom: 2px solid var(--seg-primaria); margin-top: 6px; }
+    .abas button { background: var(--seg-base); color: var(--seg-primaria); padding: 8px 16px; }
+    .abas button[aria-selected=true] { background: var(--seg-primaria); color: var(--inteli-branco); }
+    .aba { display: none; padding-top: 10px; }
+    .aba.ativa { display: block; }
+
+    /* 04: a equipe */
+    .chat { display: flex; flex-direction: column; height: calc(100vh - 150px); min-height: 680px; position: sticky; top: 16px; }
+    .equipe { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+    @media (max-width: 560px) { .equipe { grid-template-columns: 1fr; } }
+    .agente { border: 1px solid var(--seg-borda); padding: 10px 12px; display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; align-items: center; position: relative; overflow: hidden; transition: all .3s ease; border-radius: 4px; }
+    .avatar { grid-row: span 3; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+              background: var(--seg-primaria); color: var(--inteli-branco); position: relative; transition: transform .3s ease; }
+    .avatar .material-symbols-outlined { font-size: 24px; }
+    .agente[data-agente=atlas] .avatar { background: #0084FF; }
+    .agente[data-agente=vera] .avatar { background: var(--seg-secundaria); }
+    .agente[data-agente=ciro] .avatar { background: var(--seg-destaque); }
+    .agente[data-agente=diana] .avatar { background: #7B2CBF; }
+    .agente[data-agente=elias] .avatar { background: #00B4D8; }
+    .agente .nome { font-weight: 700; font-size: 15px; }
+    .agente .papel { font-size: 12px; }
+    .agente .estado { font-size: 12px; font-weight: 600; display: flex; gap: 4px; align-items: center; }
+    
+    /* Estado ativo / trabalhando */
+    .agente.trabalhando { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); }
+    .agente.trabalhando[data-agente=atlas] { border-color: #0084FF; box-shadow: 0 0 14px rgba(0, 132, 255, 0.35); }
+    .agente.trabalhando[data-agente=vera] { border-color: var(--seg-secundaria); box-shadow: 0 0 14px rgba(0, 184, 124, 0.35); }
+    .agente.trabalhando[data-agente=ciro] { border-color: var(--seg-destaque); box-shadow: 0 0 14px rgba(226, 35, 26, 0.35); }
+    .agente.trabalhando[data-agente=diana] { border-color: #7B2CBF; box-shadow: 0 0 14px rgba(123, 44, 191, 0.35); }
+    .agente.trabalhando[data-agente=elias] { border-color: #00B4D8; box-shadow: 0 0 14px rgba(0, 180, 216, 0.35); }
+    
+    .agente.trabalhando .avatar::after { content: ""; position: absolute; inset: -5px; border-radius: 50%;
+      border: 2px solid currentColor; animation: pulso 1.2s ease-out infinite; }
+    .agente.trabalhando[data-agente=atlas] .avatar::after { border-color: #0084FF; }
+    .agente.trabalhando[data-agente=vera] .avatar::after { border-color: var(--seg-secundaria); }
+    .agente.trabalhando[data-agente=ciro] .avatar::after { border-color: var(--seg-destaque); }
+    .agente.trabalhando[data-agente=diana] .avatar::after { border-color: #7B2CBF; }
+    .agente.trabalhando[data-agente=elias] .avatar::after { border-color: #00B4D8; }
+    
+    .agente.trabalhando::before { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, currentColor, transparent); animation: varrer 1.4s linear infinite; }
+    .agente.trabalhando[data-agente=atlas]::before { background: linear-gradient(90deg, transparent, #0084FF, transparent); }
+    .agente.trabalhando[data-agente=vera]::before { background: linear-gradient(90deg, transparent, var(--seg-secundaria), transparent); }
+    .agente.trabalhando[data-agente=ciro]::before { background: linear-gradient(90deg, transparent, var(--seg-destaque), transparent); }
+    .agente.trabalhando[data-agente=diana]::before { background: linear-gradient(90deg, transparent, #7B2CBF, transparent); }
+    .agente.trabalhando[data-agente=elias]::before { background: linear-gradient(90deg, transparent, #00B4D8, transparent); }
+
+    .agente.pronto .estado { color: var(--seg-secundaria); }
+    .pontos span { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; margin-left: 2px; animation: ponto 1s infinite; }
+    .pontos span:nth-child(2) { animation-delay: .15s; } .pontos span:nth-child(3) { animation-delay: .3s; }
+    .modelo-linha { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; margin-bottom: 10px; }
+    .modelo-linha > div { flex: 1; min-width: 220px; }
+    .modelo-linha label { margin-top: 0; }
+    .mensagens { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 4px 2px 12px; scroll-behavior: smooth; }
+    .msg { max-width: 92%; padding: 12px 14px; line-height: 1.5; white-space: pre-wrap; font-size: 15px; animation: subir .35s both; border-radius: 4px; }
+    .msg.eu { align-self: flex-end; background: var(--seg-primaria); color: var(--inteli-branco); }
+    .msg.agente-msg { align-self: flex-start; background: var(--seg-superficie); border-left: 4px solid #0084FF; transition: all .3s ease; }
+    .msg.agente-msg[data-agente=atlas] { border-left-color: #0084FF; }
+    .msg.agente-msg[data-agente=vera] { border-left-color: var(--seg-secundaria); }
+    .msg.agente-msg[data-agente=ciro] { border-left-color: var(--seg-destaque); }
+    .msg.agente-msg[data-agente=diana] { border-left-color: #7B2CBF; }
+    .msg.agente-msg[data-agente=elias] { border-left-color: #00B4D8; }
+    
+    /* Indicador ativo de geração na bolha */
+    .msg.agente-msg.gerando { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2); animation: pulsoBorda 1.8s infinite ease-in-out; }
+    .msg.agente-msg.gerando[data-agente=atlas] { border-color: #0084FF; }
+    .msg.agente-msg.gerando[data-agente=vera] { border-color: var(--seg-secundaria); }
+    .msg.agente-msg.gerando[data-agente=ciro] { border-color: var(--seg-destaque); }
+    .msg.agente-msg.gerando[data-agente=diana] { border-color: #7B2CBF; }
+    .msg.agente-msg.gerando[data-agente=elias] { border-color: #00B4D8; }
+
+    .msg .quem { display: flex; gap: 6px; align-items: center; font-weight: 700; font-size: 13px; margin-bottom: 4px; white-space: normal; }
+    .msg .quem small { font-weight: 500; opacity: .85; }
+    
+    .selo { display: inline-flex; gap: 4px; align-items: center; font-size: 12px; font-weight: 700; padding: 2px 8px; margin-left: auto;
+            background: var(--seg-secundaria); color: var(--inteli-branco); border-radius: 3px; }
+    .selo.corrigido { background: var(--seg-destaque); }
+    .selo.gerando { background: rgba(255,255,255,0.12); color: var(--seg-texto); border: 1px solid var(--seg-borda); font-weight: 600; }
+    .selo.gerando .ponto-ativo { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #00B87C; animation: ponto 1s infinite alternate; }
+
+    /* Indicador de digitando em tempo real */
+    .cursor-digitando { display: inline-block; width: 2px; height: 1em; background: currentColor; margin-left: 2px; vertical-align: text-bottom; animation: cursorPisca .8s infinite; }
+    
+    /* Placeholder temporário de geração da equipe */
+    .msg-placeholder-gerando { align-self: flex-start; display: flex; gap: 10px; align-items: center; padding: 10px 14px; background: var(--seg-superficie); border: 1px dashed var(--seg-borda); border-radius: 6px; font-size: 13px; animation: subir .3s ease; }
+    .msg-placeholder-gerando .avatar-mini { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--inteli-branco); font-size: 16px; background: #0084FF; transition: background .3s; }
+    .msg-placeholder-gerando .onda-digitando { display: flex; gap: 4px; align-items: center; }
+    .msg-placeholder-gerando .onda-digitando span { width: 6px; height: 6px; background: var(--seg-secundaria); border-radius: 50%; animation: onda 1.2s infinite ease-in-out; }
+    .msg-placeholder-gerando .onda-digitando span:nth-child(2) { animation-delay: .2s; }
+    .msg-placeholder-gerando .onda-digitando span:nth-child(3) { animation-delay: .4s; }
+
+    .msg.aviso { align-self: center; font-size: 13px; background: transparent; padding: 4px; text-align: center; }
+    .msg.rodape { align-self: flex-start; font-size: 12px; padding: 0 2px; opacity: .8; }
+    .sugestoes { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    .sugestoes button { font-size: 13px; font-weight: 500; padding: 6px 10px; }
+    .enviar { display: flex; gap: 8px; }
+    .enviar textarea { min-height: 52px; height: 52px; }
+    footer { text-align: center; font-size: 13px; padding: 0 16px 32px; }
+
+    @keyframes girar { to { transform: rotate(360deg); } }
+    @keyframes pulso { from { transform: scale(.9); opacity: 1; } to { transform: scale(1.35); opacity: 0; } }
+    @keyframes pulsoBorda { 0%, 100% { border-left-width: 4px; } 50% { border-left-width: 8px; } }
+    @keyframes varrer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+    @keyframes ponto { 0%, 80%, 100% { opacity: .2; } 40% { opacity: 1; } }
+    @keyframes cursorPisca { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    @keyframes onda { 0%, 100% { transform: translateY(0); opacity: .4; } 50% { transform: translateY(-4px); opacity: 1; } }
+    @keyframes subir { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="topo">
+    <div class="topo-linha">
+      <h1>Painel de retenção Kovan LATAM</h1>
+      <p>MBA em IA e Dados para Negócios &middot; Inteli x Lenovo &middot; Aula 08</p>
+    </div>
+    <nav class="trilha" aria-label="Passos do painel"><ol>
+      <li id="t1"><span class="n">1</span>Planilha e modelo</li>
+      <li id="t2"><span class="n">2</span>Planos de ação</li>
+      <li id="t3"><span class="n">3</span>Conexão com o n8n</li>
+      <li id="t4"><span class="n">4</span>Conversa com a equipe</li>
+    </ol></nav>
+  </header>
+
+  <main>
+    <div class="grid-principal">
+    <div class="coluna">
+      <section class="bloco" id="bloco-planilha">
+        <h2><span class="num">01</span>Planilha original e modelo</h2>
+        <p class="ajuda">A planilha do case, <code>datasets_case_modulo2.xlsx</code>, como chegou. O painel lê a aba <em>Dataset 1</em>, treina uma regressão logística aqui no navegador e monta a fila do ciclo. Nada sai do seu computador nesta etapa.</p>
+        <div class="soltar" id="soltar" tabindex="0" role="button">
+          <strong><span class="material-symbols-outlined">upload_file</span>Arraste a planilha aqui ou clique para escolher</strong>
+          <span id="nome-arquivo" class="status">Nenhum arquivo carregado</span>
+        </div>
+        <input id="arquivo" type="file" accept=".xlsx,.xls,.csv" hidden>
+        <ul class="etapas" id="etapas">
+          <li data-e="ler"><span class="material-symbols-outlined">progress_activity</span>Lendo a aba Dataset 1</li>
+          <li data-e="colunas"><span class="material-symbols-outlined">progress_activity</span>Montando seis colunas por conta, com histórico até 2024-02</li>
+          <li data-e="treino"><span class="material-symbols-outlined">progress_activity</span>Treinando a regressão logística em 5 dobras</li>
+          <li data-e="fila"><span class="material-symbols-outlined">progress_activity</span>Ordenando a fila por valor esperado</li>
+        </ul>
+        <div class="linha">
+          <label for="capacidade" style="margin:0">Capacidade do ciclo, em contas</label>
+          <input id="capacidade" type="number" min="10" max="500" value="138">
+        </div>
+        <div id="resumo" hidden>
+          <div class="kpis">
+            <div class="kpi"><h4 class="v" id="k-contas">-</h4><p class="r">contas elegíveis</p></div>
+            <div class="kpi"><h4 class="v" id="k-auc">-</h4><p class="r">AUC fora da amostra</p></div>
+            <div class="kpi"><h4 class="v" id="k-acertos">-</h4><p class="r">perdidas na fila</p></div>
+            <div class="kpi"><h4 class="v" id="k-esperado">-</h4><p class="r">valor esperado da fila, USD</p></div>
+          </div>
+          <details>
+            <summary>Peso de cada coluna no modelo</summary>
+            <p class="ajuda" style="margin-top:8px">Coeficiente da regressão logística sobre a coluna padronizada. Para a direita, aumenta a chance de perda.</p>
+            <div class="pesos" id="pesos"></div>
+          </details>
+          <div class="tabela-rolagem"><table id="tabela"></table></div>
+          <p class="legenda">Clique numa conta para perguntar à equipe sobre ela. Barra vermelha à esquerda: conta marcada como perdida no case.</p>
+        </div>
+      </section>
+
+      <section class="bloco" id="bloco-planos">
+        <h2><span class="num">02</span>Planos de ação por área</h2>
+        <p class="ajuda">A Vera, estrategista da equipe, só recomenda o que estiver escrito aqui. Os textos são exemplos: substitua pelo plano do grupo, com o limiar numérico de cada item.</p>
+        <div class="abas" role="tablist">
+          <button type="button" role="tab" aria-selected="true" data-aba="comercial">Comercial</button>
+          <button type="button" role="tab" aria-selected="false" data-aba="atendimento">Atendimento</button>
+          <button type="button" role="tab" aria-selected="false" data-aba="posvendas">Pós-vendas</button>
+        </div>
+        <div class="aba ativa" data-aba="comercial"><textarea id="plano-comercial" aria-label="Plano da área comercial"></textarea></div>
+        <div class="aba" data-aba="atendimento"><textarea id="plano-atendimento" aria-label="Plano da área de atendimento"></textarea></div>
+        <div class="aba" data-aba="posvendas"><textarea id="plano-posvendas" aria-label="Plano da área de pós-vendas"></textarea></div>
+        <div class="linha"><button id="restaurar" class="secundario" type="button">Restaurar exemplos</button>
+          <span class="status">Os planos ficam salvos neste navegador.</span></div>
+      </section>
+
+      <section class="bloco" id="bloco-conexao">
+        <h2><span class="num">03</span>Conexão com a equipe no n8n</h2>
+        <p class="ajuda">Baixe o workflow, importe no n8n, escolha a sua credencial OpenRouter nos três nós de modelo, troque <code>NOME_DO_GRUPO</code> no caminho do Webhook e ative. Cole aqui a URL de produção.</p>
+        <a class="botao" href="workflow_n8n.json" download="kovan-equipe-de-agentes.json"><span class="material-symbols-outlined">download</span>Baixar workflow do n8n</a>
+        <label for="endpoint">Endpoint</label>
+        <input id="endpoint" type="url" placeholder="https://inteli.app.n8n.cloud/webhook/kovan-chat-NOME_DO_GRUPO">
+        <div class="linha">
+          <button id="testar" class="secundario" type="button"><span class="material-symbols-outlined">wifi_tethering</span>Testar conexão</button>
+          <span id="status-conexao" class="status"></span>
+        </div>
+      </section>
+    </div>
+
+    <div class="coluna">
+      <section class="bloco chat">
+        <h2><span class="num">04</span>Conversa com a equipe de agentes</h2>
+        <p class="ajuda">Cada pergunta passa por três agentes, em sequência, no n8n. Cada um usa o modelo de linguagem escolhido abaixo.</p>
+        <div class="equipe">
+          <div class="agente" data-agente="atlas"><div class="avatar"><span class="material-symbols-outlined">analytics</span></div>
+            <span class="nome">Atlas</span><span class="papel">Diagnóstico</span><span class="estado">aguardando</span></div>
+          <div class="agente" data-agente="vera"><div class="avatar"><span class="material-symbols-outlined">health_and_safety</span></div>
+            <span class="nome">Vera</span><span class="papel">Saúde</span><span class="estado">aguardando</span></div>
+          <div class="agente" data-agente="ciro"><div class="avatar"><span class="material-symbols-outlined">sort</span></div>
+            <span class="nome">Ciro</span><span class="papel">Priorização</span><span class="estado">aguardando</span></div>
+          <div class="agente" data-agente="diana"><div class="avatar"><span class="material-symbols-outlined">menu_book</span></div>
+            <span class="nome">Diana</span><span class="papel">Playbook</span><span class="estado">aguardando</span></div>
+          <div class="agente" data-agente="elias"><div class="avatar"><span class="material-symbols-outlined">insights</span></div>
+            <span class="nome">Elias</span><span class="papel">Mensuração</span><span class="estado">aguardando</span></div>
+        </div>
+        <div class="modelo-linha">
+          <div>
+            <label for="modelo-llm">Modelo de linguagem, via OpenRouter</label>
+            <select id="modelo-llm">
+              <option value="nvidia/nemotron-3-super-120b-a12b:free">Nemotron 3 Super, gratuito</option>
+              <option value="qwen/qwen3.8-27b:free">Qwen 3.8 27B, gratuito</option>
+              <option value="typesafe/jev-router">Jev Router, TypeSafe System One (pago por uso)</option>
+              <option value="outro">Outro identificador...</option>
+            </select>
+          </div>
+          <div id="modelo-outro-caixa" hidden>
+            <label for="modelo-outro">Identificador no OpenRouter</label>
+            <input id="modelo-outro" type="text" placeholder="fornecedor/modelo:free">
+          </div>
+        </div>
+        <div class="mensagens" id="mensagens" aria-live="polite">
+          <div class="msg aviso">Carregue a planilha e configure o endpoint para começar.</div>
+        </div>
+        <div class="sugestoes" id="sugestoes">
+          <button type="button" class="secundario">A conta X fatura no pico e o projeto termina neste trimestre. Vale abrir um plano de intervenção, e qual?</button>
+          <button type="button" class="secundario">Temos 160 contas sinalizadas e 138 vagas. Qual fila maximiza a receita protegida?</button>
+          <button type="button" class="secundario">Um AM assumiu um território de 52 contas. Onde ele deve concentrar o primeiro mês?</button>
+          <button type="button" class="secundario">Perdemos a conta Y. O ecossistema teria evitado um novo Talvera?</button>
+        </div>
+        <form class="enviar" id="form">
+          <textarea id="pergunta" placeholder="Pergunte sobre a fila, uma conta ou o plano de uma área" aria-label="Pergunta"></textarea>
+          <button id="enviar" type="submit"><span class="material-symbols-outlined">send</span>Enviar</button>
+        </form>
+      </section>
+    </div>
+
+    </div> <!-- fecha grid-principal -->
+    <section class="bloco" id="bloco-agentes-detalhe" style="margin-top: 24px;" hidden>
+        <h2><span class="num">05</span>Dashboard Executivo: Entendendo o Ecossistema</h2>
+        <p class="ajuda">Detalhamento da atuação, insights gerados e métricas executivas que embasam as respostas da equipe de agentes.</p>
+        <div class="abas" role="tablist">
+          <button type="button" role="tab" aria-selected="true" data-aba="ag1">Atlas (Diagnóstico)</button>
+          <button type="button" role="tab" aria-selected="false" data-aba="ag2">Vera (Saúde)</button>
+          <button type="button" role="tab" aria-selected="false" data-aba="ag3">Ciro (Priorização)</button>
+          <button type="button" role="tab" aria-selected="false" data-aba="ag4">Diana (Playbook)</button>
+          <button type="button" role="tab" aria-selected="false" data-aba="ag5">Elias (Mensuração)</button>
+        </div>
+        
+        <div class="aba ativa" data-aba="ag1">
+            <h3 style="margin-top:0">Atlas: Desconstruindo o Risco</h3>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Converte o score "caixa-preta" em linguagem de negócios. O Atlas isola <em>Erosão Silenciosa</em> de quedas naturais, indicando QUAIS variáveis puxaram o risco para cima.</p>
+            
+            <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-secundaria);">
+                <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-secundaria);">Última Análise Gerada</h4>
+                <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
+            </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="kpi"><h4 class="v">100%</h4><p class="r">Aderência aos Fatores Reais</p></div>
+                <div class="kpi"><h4 class="v">-70%</h4><p class="r">Redução de Falsos Positivos</p></div>
+                <div class="kpi"><h4 class="v">R$ 248M</h4><p class="r">Risco Oculto Rastreado</p></div>
+            </div>
+            <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag1"></canvas></div>
+        </div>
+
+        <div class="aba" data-aba="ag2">
+            <h3 style="margin-top:0">Vera: Saúde do Relacionamento</h3>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Cruza dados do ERP (vendas) com CRM (interações). A Vera encontra contas com "morte súbita" (faturamento no pico, mas sem interações mapeadas).</p>
+            
+            <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-secundaria);">
+                <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-secundaria);">Última Análise Gerada</h4>
+                <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
+            </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="kpi"><h4 class="v">41%</h4><p class="r">Contas Estratégicas em Ponto Cego</p></div>
+                <div class="kpi"><h4 class="v">100%</h4><p class="r">Auditoria de Contatos CRM</p></div>
+                <div class="kpi"><h4 class="v">KAM</h4><p class="r">Validador Humano (HITL)</p></div>
+            </div>
+            <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag2"></canvas></div>
+        </div>
+
+        <div class="aba" data-aba="ag3">
+            <h3 style="margin-top:0">Ciro: Priorização da Fila</h3>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Aloca recursos limitados. A Lenovo possui 138 "vagas" para planos, porém 160+ contas sinalizadas. O Ciro foca no Maior Valor Esperado (LTV Retido).</p>
+            
+            <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-destaque);">
+                <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-destaque);">Última Análise Gerada</h4>
+                <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
+            </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="kpi"><h4 class="v">138</h4><p class="r">Planos de Capacidade Máxima</p></div>
+                <div class="kpi"><h4 class="v">Risco/LTV</h4><p class="r">Base de Ordenação</p></div>
+                <div class="kpi"><h4 class="v">100%</h4><p class="r">Uso Eficiente de Vendas</p></div>
+            </div>
+            <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag3"></canvas></div>
+        </div>
+
+        <div class="aba" data-aba="ag4">
+            <h3 style="margin-top:0">Diana: Playbook de Retenção</h3>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Padroniza intervenções. Ela traduz as regras de ouro em rascunhos de plano prontos para a aprovação do Diretor Regional, sem contato direto com o cliente.</p>
+            
+            <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-primaria);">
+                <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-primaria);">Última Análise Gerada</h4>
+                <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
+            </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="kpi"><h4 class="v">-85%</h4><p class="r">Tempo em Desenho de Plano</p></div>
+                <div class="kpi"><h4 class="v">3</h4><p class="r">Playbooks Master Ativados</p></div>
+                <div class="kpi"><h4 class="v">Drafts</h4><p class="r">Rascunhos para o KAM</p></div>
+            </div>
+            <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag4"></canvas></div>
+        </div>
+
+        <div class="aba" data-aba="ag5">
+            <h3 style="margin-top:0">Elias: Mensuração e Aprendizado</h3>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Audita o sucesso da intervenção. Contrasta a carteira que recebeu ação com o grupo de controle, retroalimentando o modelo preditivo.</p>
+            
+            <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-secundaria);">
+                <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-secundaria);">Última Análise Gerada</h4>
+                <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
+            </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="kpi"><h4 class="v">A/B</h4><p class="r">Grupo de Controle Mandatório</p></div>
+                <div class="kpi"><h4 class="v">ROI</h4><p class="r">Atribuição Auditável</p></div>
+                <div class="kpi"><h4 class="v">Drift</h4><p class="r">Feedback Contínuo do Modelo</p></div>
+            </div>
+            <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag5"></canvas></div>
+        </div>
+    </section>
+
+</main>
+  <footer>Inteli &middot; Instituto de Tecnologia e Liderança &middot; Módulo 2, Trilha de Tecnologia</footer>
+
+  <script src="modelo.js"></script>
+  <script>
+  (function () {
+    "use strict";
+    var PLANOS_EXEMPLO = {
+      comercial: "Exemplo, substitua pelo plano do grupo.\n1. Conta com valor esperado acima de USD 500 mil: ligação do Account Manager em até 5 dias úteis, com revisão do mix comprado nos últimos 12 meses.\n2. Conta com receita dos 12 meses abaixo de metade do pico anual: proposta de renovação do parque instalado, sem desconto fora da tabela vigente.\n3. Nenhuma condição comercial é oferecida sem aprovação do gerente regional.",
+      atendimento: "Exemplo, substitua pelo plano do grupo.\n1. Conta com 4 meses ou mais desde a última compra: contato do time de atendimento para verificar chamados abertos e satisfação.\n2. Registrar no CRM o motivo informado pelo cliente.\n3. Escalar ao Comercial quando o cliente citar concorrente.",
+      posvendas: "Exemplo, substitua pelo plano do grupo.\n1. Conta com 3 meses ou menos de compra nos últimos 12: revisão técnica do parque e da garantia.\n2. Conta com contrato de serviço a vencer em 90 dias: oferta de extensão de garantia pela tabela vigente.\n3. Registrar no CRM toda visita técnica feita a conta da fila."
+    };
+    var AGENTES = ["atlas", "vera", "ciro", "diana", "elias"];
+    var AREAS = ["comercial", "atendimento", "posvendas"];
+
+    var $ = function (id) { return document.getElementById(id); };
+    var linhas = [];
+    var resultado = null;
+    var sessao = "painel-" + Math.random().toString(36).slice(2, 10);
+    var espera = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+
+    function ler(chave) { try { return localStorage.getItem(chave); } catch (e) { return null; } }
+    function gravar(chave, v) { try { localStorage.setItem(chave, v); } catch (e) { /* sem armazenamento */ } }
+    function esc(v) { return String(v).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+    var fmt = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 });
+    function dec(v, n) { return v.toLocaleString("pt-BR", { minimumFractionDigits: n, maximumFractionDigits: n }); }
+    function compacto(v) {
+      if (Math.abs(v) >= 1e6) return dec(v / 1e6, 1) + " mi";
+      if (Math.abs(v) >= 1e3) return dec(v / 1e3, 1) + " mil";
+      return fmt.format(v);
+    }
+    function trilha() {
+      $("t1").classList.toggle("feito", !!resultado);
+      $("t2").classList.toggle("feito", AREAS.every(function (a) { return $("plano-" + a).value.trim(); }));
+      $("t3").classList.toggle("feito", $("status-conexao").classList.contains("ok"));
+    }
+
+    // ---- 01 planilha e modelo
+    function etapa(nome, estado) {
+      var li = document.querySelector('#etapas li[data-e="' + nome + '"]');
+      li.className = estado;
+      li.querySelector(".material-symbols-outlined").textContent = estado === "feita" ? "check_circle" : "progress_activity";
+    }
+    function carregar(arquivo) {
+      $("nome-arquivo").className = "status";
+      $("nome-arquivo").textContent = arquivo.name;
+      $("etapas").classList.add("visivel");
+      ["ler", "colunas", "treino", "fila"].forEach(function (e) { etapa(e, ""); });
+      etapa("ler", "ativa");
+      var leitor = new FileReader();
+      leitor.onload = function (ev) {
+        espera(60).then(function () {
+          if (typeof XLSX === "undefined") throw new Error("a biblioteca de planilha não carregou. Confira a conexão.");
+          var csv = arquivo.name.toLowerCase().endsWith(".csv");
+          var wb;
+          if (csv) {
+            wb = XLSX.read(ev.target.result, { type: "string" });
+          } else {
+            var data = new Uint8Array(ev.target.result);
+            wb = XLSX.read(data, { type: "array" });
+          }
+          var nomeAba = wb.SheetNames.find(function (s) { return s.toLowerCase().indexOf("dataset 1") >= 0; }) || wb.SheetNames[0];
+          var aba = wb.Sheets[nomeAba];
+          linhas = XLSX.utils.sheet_to_json(aba, { defval: "", raw: true });
+          var faltam = ["account_id", "periodo", "churn_label", "receita_usd", "qtd_pedidos"]
+            .filter(function (c) { return !(linhas[0] && c in linhas[0]); });
+          if (faltam.length) throw new Error("faltam as colunas " + faltam.join(", ") + ". Use a aba Dataset 1 da base do case.");
+          $("nome-arquivo").className = "status ok";
+          $("nome-arquivo").textContent = arquivo.name + ": " + fmt.format(linhas.length) + " linhas da aba Dataset 1";
+          etapa("ler", "feita"); etapa("colunas", "ativa");
+          return espera(350);
+        }).then(function () {
+          etapa("colunas", "feita"); etapa("treino", "ativa");
+          return espera(350);
+        }).then(function () {
+          calcular();
+          etapa("treino", "feita"); etapa("fila", "ativa");
+          return espera(300);
+        }).then(function () {
+          etapa("fila", "feita");
+        }).catch(function (e) {
+          $("nome-arquivo").className = "status erro";
+          $("nome-arquivo").textContent = "Não consegui usar o arquivo: " + e.message;
+          $("etapas").classList.remove("visivel");
+        });
+      };
+      if (arquivo.name.toLowerCase().endsWith(".csv")) leitor.readAsText(arquivo, "utf-8");
+      else leitor.readAsArrayBuffer(arquivo);
+    }
+
+    function calcular() {
+      if (!linhas.length) return;
+      var cap = Math.max(10, Math.min(500, parseInt($("capacidade").value, 10) || 138));
+      resultado = KovanModelo.rodar(linhas, cap);
+      window.KOVAN = resultado;   // para o teste e para quem quiser inspecionar no console
+      KovanModelo.guardar(KovanModelo.contexto(resultado));
+      var r = resultado;
+      $("resumo").hidden = false;
+      if ($("bloco-agentes-detalhe")) {
+        $("bloco-agentes-detalhe").hidden = false;
+        if (typeof window.atualizarGraficosDashboard === "function") {
+          window.atualizarGraficosDashboard(r);
+        }
+      }
+      $("k-contas").textContent = fmt.format(r.contas);
+      $("k-auc").textContent = dec(r.auc, 3);
+      $("k-acertos").textContent = r.acertos_fila + " de " + r.fila.length;
+      $("k-esperado").textContent = compacto(r.valor_esperado_fila);
+      var maior = Math.max.apply(null, KovanModelo.COLUNAS.map(function (c) { return Math.abs(r.pesos[c]); }));
+      $("pesos").innerHTML = KovanModelo.COLUNAS.map(function (c) {
+        var v = r.pesos[c];
+        return "<code>" + c + "</code><div class=\"barra\"><span class=\"" + (v > 0 ? "mais" : "menos") +
+               "\" style=\"width:0\" data-l=\"" + (Math.abs(v) / maior * 50).toFixed(1) + "%\"></span></div><span>" +
+               (v > 0 ? "+" : "") + dec(v, 2) + "</span>";
+      }).join("");
+      setTimeout(function () {
+        document.querySelectorAll("#pesos .barra span").forEach(function (s) { s.style.width = s.dataset.l; });
+      }, 50);
+      var cols = [["posicao", "Pos."], ["account_id", "Conta"], ["segment", "Segmento"], ["escore", "Escore"],
+                  ["valor_em_risco", "Receita 12m"], ["valor_esperado", "Valor esperado"],
+                  ["meses_desde_ultima_compra", "Meses sem compra"], ["meses_com_compra_12m", "Meses com compra"]];
+      var html = "<thead><tr>" + cols.map(function (c) { return "<th>" + c[1] + "</th>"; }).join("") + "</tr></thead><tbody>";
+      r.fila.forEach(function (l) {
+        html += "<tr data-conta=\"" + esc(l.account_id) + "\"" + (l.churn ? " class=\"perdida\"" : "") + ">" + cols.map(function (c) {
+          var v = l[c[0]];
+          if (c[0] === "escore") return "<td class=\"n\">" + dec(v, 3) + "</td>";
+          if (typeof v === "number") return "<td class=\"n\">" + fmt.format(v) + "</td>";
+          return "<td>" + esc(v) + "</td>";
+        }).join("") + "</tr>";
+      });
+      $("tabela").innerHTML = html + "</tbody>";
+      aviso_chat("Modelo treinado: " + fmt.format(r.contas) + " contas, AUC " + dec(r.auc, 3) + ". Fila de " + r.fila.length + " contas pronta para a equipe.");
+      trilha();
+    }
+    $("capacidade").addEventListener("change", calcular);
+    $("tabela").addEventListener("click", function (e) {
+      var tr = e.target.closest("tr[data-conta]");
+      if (!tr) return;
+      $("pergunta").value = "Explique por que a conta " + tr.dataset.conta + " está na fila e qual área deve agir.";
+      $("pergunta").focus();
+    });
+    var zona = $("soltar");
+    zona.addEventListener("click", function () { $("arquivo").click(); });
+    zona.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") $("arquivo").click(); });
+    $("arquivo").addEventListener("change", function () { if (this.files[0]) carregar(this.files[0]); });
+    ["dragenter", "dragover"].forEach(function (t) { zona.addEventListener(t, function (e) { e.preventDefault(); zona.classList.add("ativo"); }); });
+    ["dragleave", "drop"].forEach(function (t) { zona.addEventListener(t, function (e) { e.preventDefault(); zona.classList.remove("ativo"); }); });
+    zona.addEventListener("drop", function (e) { if (e.dataTransfer.files[0]) carregar(e.dataTransfer.files[0]); });
+
+    function contexto() { return KovanModelo.contexto(resultado); }
+    window.KovanContexto = function () { return resultado ? contexto() : null; };
+
+    // ---- 02 planos
+    AREAS.forEach(function (a) {
+      var t = $("plano-" + a);
+      t.value = ler("kovan-plano-" + a) || PLANOS_EXEMPLO[a];
+      t.addEventListener("input", function () { gravar("kovan-plano-" + a, t.value); trilha(); });
+    });
+    function planos() {
+      return { comercial: $("plano-comercial").value, atendimento: $("plano-atendimento").value,
+               "pós-vendas": $("plano-posvendas").value };
+    }
+    $("restaurar").addEventListener("click", function () {
+      AREAS.forEach(function (a) { $("plano-" + a).value = PLANOS_EXEMPLO[a]; gravar("kovan-plano-" + a, PLANOS_EXEMPLO[a]); });
+      trilha();
+    });
+    document.querySelectorAll(".abas button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var parentBloco = b.closest('.bloco');
+        parentBloco.querySelectorAll(".abas button").forEach(function (x) { x.setAttribute("aria-selected", x === b); });
+        parentBloco.querySelectorAll(".aba").forEach(function (x) { x.classList.toggle("ativa", x.dataset.aba === b.dataset.aba); });
+      });
+    });
+
+    // ---- modelo de linguagem
+    var sel = $("modelo-llm");
+    var salvo = ler("kovan-modelo-llm");
+    if (salvo && sel.querySelector('option[value="' + salvo + '"]')) sel.value = salvo;
+    $("modelo-outro").value = ler("kovan-modelo-outro") || "";
+    function mostrarOutro() { $("modelo-outro-caixa").hidden = sel.value !== "outro"; }
+    mostrarOutro();
+    sel.addEventListener("change", function () { gravar("kovan-modelo-llm", sel.value); mostrarOutro(); });
+    $("modelo-outro").addEventListener("change", function () { gravar("kovan-modelo-outro", this.value.trim()); });
+    function modeloLLM() { return sel.value === "outro" ? $("modelo-outro").value.trim() : sel.value; }
+
+    // ---- 03 conexão
+    $("endpoint").value = ler("kovan-endpoint") || "";
+    $("endpoint").addEventListener("change", function () { gravar("kovan-endpoint", this.value.trim()); });
+
+    function normalizarTexto(s) {
+      return String(s || "").toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function detectarAgentesAlvo(pergunta) {
+      var t = normalizarTexto(pergunta);
+      var mencoesDiretas = [];
+      
+      if (/\batlas\b/.test(t)) mencoesDiretas.push("atlas");
+      if (/\bvera\b/.test(t)) mencoesDiretas.push("vera");
+      if (/\bciro\b/.test(t)) mencoesDiretas.push("ciro");
+      if (/\bdiana\b/.test(t)) mencoesDiretas.push("diana");
+      if (/\belias\b/.test(t)) mencoesDiretas.push("elias");
+
+      if (mencoesDiretas.length > 0) {
+        return mencoesDiretas;
+      }
+
+      var agentes = [];
+      // Atlas: Diagnóstico, probabilidade, modelo, AUC, coeficientes, Talvera, score
+      if (/\b(diagnostico|risco|probabilidade|auc|roc|coeficiente|coeficientes|talvera|peso|pesos|score|escore|erosao|fatores)\b/.test(t)) {
+        agentes.push("atlas");
+      }
+      // Vera: CRM, contatos, saúde, relacionamento, zonas cegas, visitas, KAM turnover
+      if (/\b(saude|crm|contato|contatos|relacionamento|ponto cego|pontos cegos|zona cega|zonas cegas|visita|visitas|turnover|troca de kam|portal|telemetria)\b/.test(t)) {
+        agentes.push("vera");
+      }
+      // Ciro: Fila, priorização, teto de 138, capacidade, alocação, ranking por EV
+      if (/\b(fila|priorizacao|priorizar|capacidade|138|vagas|valor esperado|ltv|ranking|alocacao|quantas contas|ordena|ordenacao)\b/.test(t)) {
+        agentes.push("ciro");
+      }
+      // Diana: Playbook, planos de ação, minutas, resgate, desconto, alçadas comerciais
+      if (/\b(playbook|playbooks|plano|planos|minuta|minutas|resgate|desconto|proposta|renegociar|comercial|atendimento|posvendas|pos-vendas|acao|intervencao)\b/.test(t)) {
+        agentes.push("diana");
+      }
+      // Elias: Mensuração, auditoria, Delta NRR, grupo de controle, holdout, drift, ROI
+      if (/\b(mensuracao|auditoria|auditar|delta nrr|nrr|controle|holdout|drift|aprendizado|roi|go|adjust|stop|resultado financeiro)\b/.test(t)) {
+        agentes.push("elias");
+      }
+
+      if (!agentes.length) {
+        return AGENTES.slice(); // Retorna todos os 5 agentes se for pergunta geral
+      }
+      return agentes;
+    }
+
+    function chamar(pergunta, agentesAlvo) {
+      var url = $("endpoint").value.trim();
+      if (!url) return Promise.reject(new Error("Configure o endpoint do n8n no bloco 03."));
+      var c = resultado ? contexto() : { modelo: null, contas: [] };
+      return fetch(url, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: sessao,
+          pergunta: pergunta,
+          modelo_llm: modeloLLM(),
+          agentes_alvo: agentesAlvo,
+          intencao: (agentesAlvo || []).join(","),
+          modelo: c.modelo,
+          contas: c.contas,
+          planos: planos()
+        })
+      }).then(function (r) {
+        if (!r.ok) throw new Error("O n8n respondeu " + r.status + ". Confira se o workflow está ativo, se a URL é a de produção e se a credencial OpenRouter está escolhida nos nós de modelo.");
+        return r.json();
+      }).then(function (j) { return Array.isArray(j) ? j[0] : j; });
+    }
+    $("testar").addEventListener("click", function () {
+      var s = $("status-conexao");
+      s.className = "status"; s.textContent = "testando, a equipe leva alguns segundos...";
+      chamar("Responda apenas: conexão ok.", ["atlas"]).then(function () {
+        s.className = "status ok"; s.textContent = "Conexão ok"; trilha();
+      }).catch(function (e) { s.className = "status erro"; s.textContent = e.message; trilha(); });
+    });
+
+    // ---- 04 a equipe
+    var agentTitulos = {
+      atlas: { nome: "Atlas", papel: "Diagnóstico de Risco", cor: "#0084FF", icone: "analytics" },
+      vera: { nome: "Vera", papel: "Saúde do Relacionamento", cor: "var(--seg-secundaria)", icone: "health_and_safety" },
+      ciro: { nome: "Ciro", papel: "Priorização da Fila", cor: "var(--seg-destaque)", icone: "sort" },
+      diana: { nome: "Diana", papel: "Playbook de Retenção", cor: "#7B2CBF", icone: "menu_book" },
+      elias: { nome: "Elias", papel: "Mensuração e Aprendizado", cor: "#00B4D8", icone: "insights" }
+    };
+
+    function estadoAgente(nome, estado) {
+      var el = document.querySelector('.agente[data-agente="' + nome + '"]');
+      if (!el) return;
+      el.classList.remove("trabalhando", "pronto");
+      var rotulo = el.querySelector(".estado");
+      if (estado === "trabalhando") { 
+        el.classList.add("trabalhando"); 
+        rotulo.innerHTML = 'gerando <span class="pontos"><span></span><span></span><span></span></span>'; 
+      }
+      else if (estado === "pronto") { 
+        el.classList.add("pronto"); 
+        rotulo.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">check_circle</span> pronto'; 
+      }
+      else {
+        rotulo.textContent = "aguardando";
+      }
+    }
+
+    function atualizarPlaceholderGerando(chave) {
+      var ph = $("equipe-pensando");
+      var info = agentTitulos[chave] || { nome: "Equipe", papel: "Análise em andamento", cor: "#0084FF", icone: "smart_toy" };
+      if (!ph) {
+        ph = document.createElement("div");
+        ph.id = "equipe-pensando";
+        ph.className = "msg-placeholder-gerando";
+        $("mensagens").appendChild(ph);
+      }
+      ph.innerHTML = '<div class="avatar-mini" style="background:' + info.cor + '"><span class="material-symbols-outlined" style="font-size:16px">' + info.icone + '</span></div>' +
+                     '<div><strong>' + esc(info.nome) + '</strong> <span style="opacity:0.8; font-size:12px;">está analisando os dados...</span></div>' +
+                     '<div class="onda-digitando" style="margin-left:auto"><span></span><span></span><span></span></div>';
+      $("mensagens").scrollTop = $("mensagens").scrollHeight;
+    }
+
+    function removerPlaceholderGerando() {
+      var ph = $("equipe-pensando");
+      if (ph && ph.parentNode) ph.parentNode.removeChild(ph);
+    }
+
+    /* O n8n devolve a resposta dos agentes. Enquanto a resposta não chega, o
+       painel acende apenas o(s) agente(s) alvo em análise e atualiza o indicador visual no chat. */
+    function animarEquipe(agentesAlvo) {
+      agentesAlvo = (agentesAlvo && agentesAlvo.length) ? agentesAlvo : AGENTES;
+      var i = 0;
+      AGENTES.forEach(function (a) { estadoAgente(a, "aguardando"); });
+      
+      estadoAgente(agentesAlvo[0], "trabalhando");
+      atualizarPlaceholderGerando(agentesAlvo[0]);
+      
+      var id = setInterval(function () {
+        if (i < agentesAlvo.length - 1) { 
+            estadoAgente(agentesAlvo[i], "pronto"); 
+            i++; 
+            estadoAgente(agentesAlvo[i], "trabalhando"); 
+            atualizarPlaceholderGerando(agentesAlvo[i]);
+        }
+      }, 4000);
+
+      return function () { 
+        clearInterval(id); 
+        removerPlaceholderGerando();
+      };
+    }
+
+    function bolha(classe, texto) {
+      var d = document.createElement("div");
+      d.className = "msg " + classe; d.textContent = texto;
+      $("mensagens").appendChild(d); $("mensagens").scrollTop = $("mensagens").scrollHeight;
+      return d;
+    }
+    function aviso_chat(t) { bolha("aviso", t); }
+    
+    function digitar(el, texto, containerMsg, seloEl, seloFinalHtml) {
+      var i = 0, passo = Math.max(2, Math.round(texto.length / 50));
+      return new Promise(function (ok) {
+        var cursor = document.createElement("span");
+        cursor.className = "cursor-digitando";
+        (function vai() {
+          i = Math.min(texto.length, i + passo);
+          el.textContent = texto.slice(0, i);
+          el.appendChild(cursor);
+          $("mensagens").scrollTop = $("mensagens").scrollHeight;
+          if (i < texto.length) {
+            setTimeout(vai, 16);
+          } else {
+            if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+            if (containerMsg) containerMsg.classList.remove("gerando");
+            if (seloEl && seloFinalHtml) seloEl.outerHTML = seloFinalHtml;
+            else if (seloEl) seloEl.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px">check</span> pronto';
+            ok();
+          }
+        })();
+      });
+    }
+
+    function mensagemAgente(a) {
+      removerPlaceholderGerando();
+      var nome = String(a.nome || "Agente"), chave = nome.toLowerCase();
+      var icones = { atlas: "analytics", vera: "health_and_safety", ciro: "sort", diana: "menu_book", elias: "insights" };
+      var d = document.createElement("div");
+      d.className = "msg agente-msg gerando"; 
+      d.dataset.agente = chave;
+      var texto = String(a.texto || "");
+      var seloFinalHtml = "";
+      var m = texto.match(/^\s*VEREDITO:\s*(aprovado|corrigido)[^\n]*\n*/i);
+      if (m) {
+        var corr = m[1].toLowerCase() === "corrigido";
+        seloFinalHtml = '<span class="selo' + (corr ? " corrigido" : "") + '"><span class="material-symbols-outlined" style="font-size:14px">' +
+                        (corr ? "edit_note" : "verified") + "</span>" + (corr ? "corrigido" : "aprovado") + "</span>";
+        texto = texto.slice(m[0].length);
+      } else {
+        seloFinalHtml = '<span class="selo"><span class="material-symbols-outlined" style="font-size:14px">verified</span> respondido</span>';
+      }
+      
+      var seloGerandoHtml = '<span class="selo gerando"><span class="ponto-ativo"></span> gerando resposta...</span>';
+      
+      d.innerHTML = '<div class="quem"><span class="material-symbols-outlined">' + (icones[chave] || "smart_toy") + "</span>" +
+                    esc(nome) + " <small>" + esc(a.papel || "") + "</small>" + seloGerandoHtml + '</div><div class="corpo"></div>';
+      $("mensagens").appendChild(d);
+      var seloEl = d.querySelector(".selo.gerando");
+      var corpoEl = d.querySelector(".corpo");
+      return digitar(corpoEl, texto, d, seloEl, seloFinalHtml);
+    }
+
+    function perguntar(texto) {
+      texto = texto.trim();
+      if (!texto) return;
+      if (!resultado) { aviso_chat("Carregue a planilha no bloco 01 antes de perguntar."); return; }
+      bolha("eu", texto);
+      $("pergunta").value = "";
+      $("enviar").disabled = true;
+      
+      var agentesAlvo = detectarAgentesAlvo(texto);
+      var parar = animarEquipe(agentesAlvo), t0 = performance.now(), modelo = modeloLLM();
+      
+      chamar(texto, agentesAlvo).then(function (r) {
+        parar();
+        AGENTES.forEach(function (a) { estadoAgente(a, "aguardando"); });
+        
+        var mapAba = { "atlas": "ag1", "vera": "ag2", "ciro": "ag3", "diana": "ag4", "elias": "ag5" };
+        var agentes = r && r.agentes ? r.agentes : [{ nome: "Agente", papel: "", texto: (r && (r.resposta || r.output)) || JSON.stringify(r) }];
+        
+        agentes.forEach(function(a) {
+            var chave = String(a.nome || "").toLowerCase();
+            var abaId = mapAba[chave];
+            if (abaId) {
+                var contentDiv = document.querySelector('.aba[data-aba="' + abaId + '"] .conteudo-resposta');
+                if (contentDiv) {
+                    contentDiv.textContent = a.texto || "Sem resposta.";
+                }
+            }
+        });
+
+        var cadeia = Promise.resolve();
+        agentes.forEach(function (a) {
+          cadeia = cadeia.then(function () {
+            var chave = String(a.nome || "").toLowerCase();
+            if (AGENTES.indexOf(chave) >= 0) {
+              estadoAgente(chave, "trabalhando");
+              // Sincronizar aba correspondente no painel executivo se visivel
+              var abaBtn = document.querySelector('.aba-btn[data-alvo="ag' + (AGENTES.indexOf(chave) + 1) + '"]');
+              if (abaBtn && typeof alternarAba === "function") alternarAba(abaBtn);
+            }
+            return mensagemAgente(a).then(function() {
+                if (AGENTES.indexOf(chave) >= 0) estadoAgente(chave, "pronto");
+            });
+          });
+        });
+        return cadeia.then(function () {
+          var qtdAg = agentes.length;
+          var msgRodape = qtdAg === 1 ? (agentes[0].nome + " respondeu pontualmente") : (qtdAg + " agentes responderam");
+          bolha("rodape", msgRodape + " em " + Math.round((performance.now() - t0) / 1000) + " s, com " + (r.modelo || modelo) + ".");
+        });
+      }).catch(function (e) {
+        parar();
+        AGENTES.forEach(function (a) { estadoAgente(a, "aguardando"); });
+        bolha("aviso", e.message);
+      }).then(function () {
+        $("enviar").disabled = false;
+        $("t4").classList.add("feito");
+      });
+    }
+    $("form").addEventListener("submit", function (e) { e.preventDefault(); perguntar($("pergunta").value); });
+    $("pergunta").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); perguntar(this.value); }
+    });
+    document.querySelectorAll("#sugestoes button").forEach(function (b) {
+      b.addEventListener("click", function () { perguntar(b.textContent); });
+    });
+    trilha();
+  })();
+  </script>
+  <script>
+    // Gerenciamento dinamico dos graficos do dashboard executivo
+    (function () {
+      var charts = {};
+
+      function destruirGrafico(id) {
+        if (charts[id]) {
+          try { charts[id].destroy(); } catch (e) {}
+          charts[id] = null;
+        }
+      }
+
+      window.atualizarGraficosDashboard = function (r) {
+        if (typeof Chart === "undefined" || !r) return;
+
+        Chart.defaults.color = "#8E8E9E";
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        // Grafico 1: Atlas (Pesos reais das variaveis)
+        if (document.getElementById("chart-ag1") && r.pesos) {
+          destruirGrafico("chart-ag1");
+          var rotulosPesos = Object.keys(r.pesos);
+          var valoresPesos = rotulosPesos.map(function (k) { return Number(r.pesos[k].toFixed(2)); });
+          var coresPesos = valoresPesos.map(function (v) { return v > 0 ? "#E2231A" : "#00B87C"; });
+
+          charts["chart-ag1"] = new Chart(document.getElementById("chart-ag1").getContext("2d"), {
+            type: "bar",
+            data: {
+              labels: rotulosPesos,
+              datasets: [{
+                label: "Peso no Risco de Churn",
+                data: valoresPesos,
+                backgroundColor: coresPesos,
+                borderRadius: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } }
+            }
+          });
+        }
+
+        // Grafico 2: Vera (Distribuicao de Risco e Zonas Cegas)
+        if (document.getElementById("chart-ag2") && r.fila) {
+          destruirGrafico("chart-ag2");
+          var semCompraLonga = r.fila.filter(function (c) { return c.meses_desde_ultima_compra >= 3; }).length;
+          var comCompraRecente = r.fila.length - semCompraLonga;
+
+          charts["chart-ag2"] = new Chart(document.getElementById("chart-ag2").getContext("2d"), {
+            type: "doughnut",
+            data: {
+              labels: ["Atividade Recente", "Zona Cega (> 3 meses sem compra)"],
+              datasets: [{
+                data: [comCompraRecente, semCompraLonga],
+                backgroundColor: ["#00B87C", "#FFB800"],
+                borderWidth: 0
+              }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+        }
+
+        // Grafico 3: Ciro (Capacidade vs Fila)
+        if (document.getElementById("chart-ag3") && r.fila) {
+          destruirGrafico("chart-ag3");
+          var totalContas = r.contas || 1187;
+          var cap = r.fila.length;
+          var overflow = Math.max(0, Math.round(totalContas * 0.15) - cap);
+
+          charts["chart-ag3"] = new Chart(document.getElementById("chart-ag3").getContext("2d"), {
+            type: "bar",
+            data: {
+              labels: ["Total Carteira", "Fila Priorizada (Capacidade)", "Demais em Monitoramento"],
+              datasets: [{
+                label: "Volume de Contas",
+                data: [totalContas, cap, totalContas - cap],
+                backgroundColor: ["#32323D", "#00B87C", "#0084FF"],
+                borderRadius: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              indexAxis: "y",
+              plugins: { legend: { display: false } }
+            }
+          });
+        }
+
+        // Grafico 4: Diana (Distribuicao de Playbooks Estimada por Segmento)
+        if (document.getElementById("chart-ag4") && r.fila) {
+          destruirGrafico("chart-ag4");
+          var segs = {};
+          r.fila.forEach(function (c) {
+            var s = c.segment || "Outros";
+            segs[s] = (segs[s] || 0) + 1;
+          });
+          var segLabels = Object.keys(segs);
+          var segValues = segLabels.map(function (k) { return segs[k]; });
+
+          charts["chart-ag4"] = new Chart(document.getElementById("chart-ag4").getContext("2d"), {
+            type: "pie",
+            data: {
+              labels: segLabels.map(function (l) { return "Playbook " + l; }),
+              datasets: [{
+                data: segValues,
+                backgroundColor: ["#0084FF", "#E2231A", "#00B87C", "#FFB800", "#7B2CBF"],
+                borderWidth: 0
+              }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+        }
+
+        // Grafico 5: Elias (Curva de Projecao de NRR)
+        if (document.getElementById("chart-ag5")) {
+          destruirGrafico("chart-ag5");
+          charts["chart-ag5"] = new Chart(document.getElementById("chart-ag5").getContext("2d"), {
+            type: "line",
+            data: {
+              labels: ["Mês 1", "Mês 2", "Mês 3", "Mês 4", "Mês 5", "Mês 6"],
+              datasets: [{
+                label: "NRR Grupo Intervenção (Diana)",
+                data: [100, 101, 102.5, 104, 105.2, 106.8],
+                borderColor: "#00B87C",
+                backgroundColor: "rgba(0,184,124,0.1)",
+                tension: 0.3
+              }, {
+                label: "NRR Grupo Controle Holdout (Sem Ação)",
+                data: [100, 97, 94.5, 92, 90.1, 88.5],
+                borderColor: "#E2231A",
+                backgroundColor: "rgba(226,35,26,0.1)",
+                tension: 0.3
+              }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+          });
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

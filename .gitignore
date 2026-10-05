@@ -6,9 +6,7 @@ venv/
 env/
 .ipynb_checkpoints/
 
-# Arquivos de dados pesados (opcional: manter se for menor que 50MB)
- data/*.xlsx
-# data/*.csv
-
-# Relatórios temporários
+# Arquivos temporarios e extracoes
+datasets_case_modulo2_4sheets.xlsx
+pdf_extracted.txt
 *.log
