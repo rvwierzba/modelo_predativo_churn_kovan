@@ -229,6 +229,26 @@
         </div>
 
       </div>
+    
+      <!-- PDF p.3 · ESCOLHA 1: O ALVO -->
+      <div class="mt-7 pt-6 border-t border-lenovo-border/70 space-y-4" id="escolha-alvo">
+        <div><span class="text-xs uppercase tracking-wider font-mono font-bold text-lenovo-redLight">Escolha 1 · O alvo</span>
+          <h3 class="text-xl font-bold text-white mt-1">O alvo escolhido foi a erosão silenciosa</h3></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+          <div class="bg-lenovo-carbonLight rounded-xl border border-lenovo-border p-4 space-y-2">
+            <div class="uppercase font-mono text-lenovo-muted text-[11px]">Caminho A · Não escolhido</div>
+            <h4 class="font-bold text-white text-base">Prever a ruptura</h4>
+            <ul class="list-disc pl-4 space-y-1 text-gray-300"><li>Rótulo pronto no ERP e validação direta.</li><li>Evento raro: 34 rupturas em 14 trimestres.</li><li>Dispara tarde: o cliente já trocou de fornecedor.</li><li>Sinaliza de 6 a 10 contas por trimestre.</li></ul>
+          </div>
+          <div class="bg-lenovo-red/10 rounded-xl border border-lenovo-red/40 p-4 space-y-2">
+            <div class="uppercase font-mono text-lenovo-redLight text-[11px]">Caminho B · Escolhido</div>
+            <h4 class="font-bold text-white text-base">Prever a erosão silenciosa</h4>
+            <ul class="list-disc pl-4 space-y-1 text-gray-200"><li>Sinal chega com o relacionamento ainda aberto.</li><li>Ataca a origem de 74,1% da perda de NRR, segundo o caso.</li><li>Exige alinhar com o comercial o que caracteriza erosão.</li><li>Estimativa do caso: 120 a 190 alertas para 138 planos.</li></ul>
+          </div>
+        </div>
+        <p class="text-xs text-gray-300 border-l-2 border-lenovo-red pl-3"><strong class="text-white">Consequência da escolha:</strong> a fila projetada pode superar a capacidade assumida no caso. Por isso, priorização por receita em risco e grupo de controle fazem parte do desenho. <span class="text-lenovo-muted">Capacidade de referência do caso: 46 Account Managers × 3 planos/trimestre; não confundir com as 138 contas sinalizadas no teste do modelo.</span></p>
+      </div>
+
     </section>
 
     <!-- SECTION 1: VALIDAÇÃO DAS 4 HIPÓTESES DE CHURN -->
@@ -350,6 +370,22 @@
           </div>
         </div>
 
+      </div>
+
+    
+      <!-- PDF p.4 · ESCOLHA 2: O FOCO -->
+      <div class="mt-6 space-y-4" id="escolha-foco">
+        <div class="border-t border-lenovo-border pt-5"><span class="text-xs uppercase tracking-wider font-mono font-bold text-lenovo-redLight">Escolha 2 · O foco</span>
+          <h3 class="text-xl font-bold text-white mt-1">As hipóteses mudaram o foco da ação</h3></div>
+        <div class="overflow-x-auto rounded-xl border border-lenovo-border"><table class="w-full text-left text-xs border-collapse min-w-[680px]">
+          <thead class="bg-lenovo-carbonLight text-white"><tr><th class="p-3">Hipótese</th><th class="p-3">Veredito</th><th class="p-3">Evidência</th><th class="p-3">Decisão</th></tr></thead>
+          <tbody class="divide-y divide-lenovo-border text-gray-300">
+            <tr><td class="p-3">H1 · Fricção digital na aquisição</td><td class="p-3">Inconclusiva</td><td class="p-3">Churn de 56% a 60% no Small Market, que representa 0,8% da receita.</td><td class="p-3">Instrumentar o portal antes de intervir.</td></tr>
+            <tr><td class="p-3">H2 · Portfólio restrito</td><td class="p-3">Associação forte</td><td class="p-3">1 marca: 81,6% de churn; 4 ou mais marcas: 10,4%.</td><td class="p-3">Cross-sell de hardware via Inside Sales.</td></tr>
+            <tr class="bg-lenovo-red/10"><td class="p-3 font-bold text-white">H3 · Erosão lenta em Key Accounts</td><td class="p-3">Refutada no recorte</td><td class="p-3">Nas 146 maiores rupturas, receita mediana subiu de US$ 34,5 mil para US$ 61,2 mil.</td><td class="p-3">Agir durante o projeto: sustentação e próxima onda.</td></tr>
+            <tr><td class="p-3">H4 · Falhas técnicas e pós-venda</td><td class="p-3">Inconclusiva</td><td class="p-3">A base não continha registros de chamados nem de SLA.</td><td class="p-3">Integrar Helpdesk ao CRM.</td></tr>
+          </tbody></table></div>
+        <div class="bg-lenovo-carbonLight rounded-xl p-4 border-l-4 border-lenovo-red text-xs leading-relaxed text-gray-200"><strong class="text-white">Achado que mudou a estratégia:</strong> em Key Accounts, as rupturas analisadas ocorreram no pico de faturamento, ao fim do rollout. O foco passou a ser <strong class="text-white">Key Accounts Volume</strong>, associado a <strong class="text-white">67,3% da receita</strong> no recorte do caso, com atuação durante o projeto. <span class="text-lenovo-muted">Associação observada não demonstra causalidade.</span></div>
       </div>
 
     </section>
@@ -1160,7 +1196,22 @@
             <strong class="text-white">Função:</strong> coordenar o ciclo de retenção de ponta a ponta, da atualização do score à mensuração do resultado. Aciona cada agente na ordem correta, entrega o contexto necessário e interrompe o fluxo em cada ponto de aprovação humana. Não decide mérito comercial.
           </p>
 
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          
+      <!-- PDF p.5 · ESCOLHA 3: A ARQUITETURA -->
+      <div class="glass-card rounded-xl p-5 border border-lenovo-border space-y-4" id="escolha-arquitetura">
+        <div><span class="text-xs uppercase tracking-wider font-mono font-bold text-lenovo-redLight">Escolha 3 · A arquitetura</span><h3 class="text-xl font-bold text-white mt-1">Os agentes propõem e as pessoas decidem</h3></div>
+        <div class="bg-lenovo-carbonLight border border-lenovo-border rounded-lg p-3 text-xs text-gray-200"><strong class="text-lenovo-redLight uppercase font-mono mr-2">Orquestrador</strong>Escolhe os agentes da rodada, registra decisões e controla as etapas de aprovação.</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          <div class="rounded-lg border border-lenovo-border p-3"><div class="text-lenovo-redLight font-mono text-[10px]">1 · ANÁLISE</div><h4 class="font-bold text-white text-base mt-1">Atlas</h4><p class="text-gray-300 mt-1">Diagnóstico de risco; explica o motivo do alerta.</p><p class="text-cyan-300 mt-3">KAM valida o diagnóstico.</p></div>
+          <div class="rounded-lg border border-lenovo-border p-3"><div class="text-lenovo-redLight font-mono text-[10px]">2 · ANÁLISE</div><h4 class="font-bold text-white text-base mt-1">Vera</h4><p class="text-gray-300 mt-1">Saúde do relacionamento; identifica pontos cegos de contato.</p><p class="text-cyan-300 mt-3">KAM corrige e completa o resumo.</p></div>
+          <div class="rounded-lg border border-lenovo-border p-3"><div class="text-lenovo-redLight font-mono text-[10px]">3 · ALOCAÇÃO</div><h4 class="font-bold text-white text-base mt-1">Ciro</h4><p class="text-gray-300 mt-1">Propõe a fila de retenção, sujeita à capacidade validada.</p><p class="text-cyan-300 mt-3">Diretor Regional aprova a fila.</p></div>
+          <div class="rounded-lg border border-lenovo-border p-3"><div class="text-lenovo-redLight font-mono text-[10px]">4 · AÇÃO</div><h4 class="font-bold text-white text-base mt-1">Diana</h4><p class="text-gray-300 mt-1">Rascunha plano e roteiro de retenção.</p><p class="text-cyan-300 mt-3">KAM aprova ou edita o plano.</p></div>
+          <div class="rounded-lg border border-lenovo-border p-3"><div class="text-lenovo-redLight font-mono text-[10px]">5 · APRENDIZADO</div><h4 class="font-bold text-white text-base mt-1">Elias</h4><p class="text-gray-300 mt-1">Define mensuração e comparação com grupo de controle.</p><p class="text-cyan-300 mt-3">Finance valida; Comitê decide.</p></div>
+        </div>
+        <p class="text-xs text-gray-300 border-l-2 border-lenovo-red pl-3"><strong class="text-white">Limite de atuação:</strong> nenhum agente fala com o cliente. Contatos, execução e concessões comerciais permanecem sob responsabilidade de pessoas. As aprovações são parte da arquitetura proposta, não evidência de execução concluída.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <div class="space-y-1">
               <div class="text-lenovo-muted font-mono text-[11px] uppercase">Responsabilidades</div>
               <ul class="list-disc pl-4 space-y-1 text-xs text-gray-300 leading-relaxed">
