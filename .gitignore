@@ -6,7 +6,10 @@ venv/
 env/
 .ipynb_checkpoints/
 
-# Arquivos temporarios e extracoes
+# Arquivo bruto muito pesado (> 50MB que excede o limite do GitHub)
+datasets_case_modulo2_5yrs.xlsx
 datasets_case_modulo2_4sheets.xlsx
 pdf_extracted.txt
+
+# Relatórios temporários
 *.log

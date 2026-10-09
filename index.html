@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel de retenção Kovan &middot; MBA Inteli x Lenovo</title>
+  <title>Painel de retenção Kovan v4 &middot; MBA Inteli x Lenovo</title>
   <!--
     Painel da Aula 08. Uma página, sem build: lê a planilha original do case,
     treina o modelo no navegador (modelo.js), guarda os planos de ação de cada
@@ -155,6 +155,10 @@
     .modelo-linha > div { flex: 1; min-width: 220px; }
     .modelo-linha label { margin-top: 0; }
     .mensagens { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 4px 2px 12px; scroll-behavior: smooth; }
+    .historico-selo { font-size: 11px; font-weight: 700; letter-spacing: .03em; color: var(--seg-secundaria); margin-bottom: 12px; padding-bottom: 9px; border-bottom: 1px solid var(--seg-borda); }
+    .historico-linha { line-height: 1.65; padding: 7px 0; border-bottom: 1px solid var(--seg-borda); overflow-wrap: anywhere; }
+    .historico-linha:last-child { border-bottom: none; }
+    .historico-linha strong { font-weight: 700; color: var(--seg-texto); }
     .msg { max-width: 92%; padding: 12px 14px; line-height: 1.5; white-space: pre-wrap; font-size: 15px; animation: subir .35s both; border-radius: 4px; }
     .msg.eu { align-self: flex-end; background: var(--seg-primaria); color: var(--inteli-branco); }
     .msg.agente-msg { align-self: flex-start; background: var(--seg-superficie); border-left: 4px solid #0084FF; transition: all .3s ease; }
@@ -266,7 +270,7 @@
 
       <section class="bloco" id="bloco-planos">
         <h2><span class="num">02</span>Planos de ação por área</h2>
-        <p class="ajuda">A Vera, estrategista da equipe, só recomenda o que estiver escrito aqui. Os textos são exemplos: substitua pelo plano do grupo, com o limiar numérico de cada item.</p>
+        <p class="ajuda">Planos de referência por área para apoiar propostas preliminares da Diana. Os exemplos não representam ações aprovadas ou executadas.</p>
         <div class="abas" role="tablist">
           <button type="button" role="tab" aria-selected="true" data-aba="comercial">Comercial</button>
           <button type="button" role="tab" aria-selected="false" data-aba="atendimento">Atendimento</button>
@@ -281,10 +285,11 @@
 
       <section class="bloco" id="bloco-conexao">
         <h2><span class="num">03</span>Conexão com a equipe no n8n</h2>
-        <p class="ajuda">Baixe o workflow, importe no n8n, escolha a sua credencial OpenRouter nos três nós de modelo, troque <code>NOME_DO_GRUPO</code> no caminho do Webhook e ative. Cole aqui a URL de produção.</p>
+        <p class="ajuda">Baixe o workflow, importe no n8n, configure as credenciais dos modelos de linguagem, troque <code>NOME_DO_GRUPO</code> no caminho do Webhook e ative. Cole aqui a URL de produção.</p>
         <a class="botao" href="workflow_n8n.json" download="kovan-equipe-de-agentes.json"><span class="material-symbols-outlined">download</span>Baixar workflow do n8n</a>
         <label for="endpoint">Endpoint</label>
         <input id="endpoint" type="url" placeholder="https://inteli.app.n8n.cloud/webhook/kovan-chat-NOME_DO_GRUPO">
+        <div class="linha"><button id="demo-historico" class="secundario" type="button">Exibir análises históricas (sem n8n)</button><span class="status">Modo de apresentação: registros de testes anteriores, sem nova execução.</span></div>
         <div class="linha">
           <button id="testar" class="secundario" type="button"><span class="material-symbols-outlined">wifi_tethering</span>Testar conexão</button>
           <span id="status-conexao" class="status"></span>
@@ -295,7 +300,7 @@
     <div class="coluna">
       <section class="bloco chat">
         <h2><span class="num">04</span>Conversa com a equipe de agentes</h2>
-        <p class="ajuda">Cada pergunta passa por três agentes, em sequência, no n8n. Cada um usa o modelo de linguagem escolhido abaixo.</p>
+        <p class="ajuda">As perguntas são encaminhadas aos agentes selecionados pelo Orquestrador no n8n. Cada um usa o modelo de linguagem escolhido abaixo.</p>
         <div class="equipe">
           <div class="agente" data-agente="atlas"><div class="avatar"><span class="material-symbols-outlined">analytics</span></div>
             <span class="nome">Atlas</span><span class="papel">Diagnóstico</span><span class="estado">aguardando</span></div>
@@ -342,7 +347,7 @@
     </div> <!-- fecha grid-principal -->
     <section class="bloco" id="bloco-agentes-detalhe" style="margin-top: 24px;" hidden>
         <h2><span class="num">05</span>Dashboard Executivo: Entendendo o Ecossistema</h2>
-        <p class="ajuda">Detalhamento da atuação, insights gerados e métricas executivas que embasam as respostas da equipe de agentes.</p>
+        <p class="ajuda">Análises recebidas do workflow ou recuperadas de testes históricos, sempre identificadas. KPIs sem validação aparecem como não apurados.</p>
         <div class="abas" role="tablist">
           <button type="button" role="tab" aria-selected="true" data-aba="ag1">Atlas (Diagnóstico)</button>
           <button type="button" role="tab" aria-selected="false" data-aba="ag2">Vera (Saúde)</button>
@@ -353,29 +358,29 @@
         
         <div class="aba ativa" data-aba="ag1">
             <h3 style="margin-top:0">Atlas: Desconstruindo o Risco</h3>
-            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Converte o score "caixa-preta" em linguagem de negócios. O Atlas isola <em>Erosão Silenciosa</em> de quedas naturais, indicando QUAIS variáveis puxaram o risco para cima.</p>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Converte o score "caixa-preta" em linguagem de negócios. O Atlas interpreta o score e evidencia padrões de risco e lacunas; pesos globais do modelo não são explicações causais individuais.</p>
             
             <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-secundaria);">
                 <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-secundaria);">Última Análise Gerada</h4>
                 <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
             </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="kpi"><h4 class="v">100%</h4><p class="r">Aderência aos Fatores Reais</p></div>
-                <div class="kpi"><h4 class="v">-70%</h4><p class="r">Redução de Falsos Positivos</p></div>
-                <div class="kpi"><h4 class="v">R$ 248M</h4><p class="r">Risco Oculto Rastreado</p></div>
+                <div class="kpi"><h4 class="v">Não apurado</h4><p class="r">Aderência aos Fatores Reais</p></div>
+                <div class="kpi"><h4 class="v">Não apurado</h4><p class="r">Redução de Falsos Positivos</p></div>
+                <div class="kpi"><h4 class="v">Não apurado</h4><p class="r">Risco Oculto Rastreado</p></div>
             </div>
             <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag1"></canvas></div>
         </div>
 
         <div class="aba" data-aba="ag2">
             <h3 style="margin-top:0">Vera: Saúde do Relacionamento</h3>
-            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Cruza dados do ERP (vendas) com CRM (interações). A Vera encontra contas com "morte súbita" (faturamento no pico, mas sem interações mapeadas).</p>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Cruza dados do ERP (vendas) com CRM (interações). A Vera avalia registros de relacionamento e destaca lacunas de cobertura, sem concluir deterioração quando os dados são insuficientes.</p>
             
             <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-secundaria);">
                 <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-secundaria);">Última Análise Gerada</h4>
                 <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
             </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="kpi"><h4 class="v">41%</h4><p class="r">Contas Estratégicas em Ponto Cego</p></div>
-                <div class="kpi"><h4 class="v">100%</h4><p class="r">Auditoria de Contatos CRM</p></div>
+                <div class="kpi"><h4 class="v">Não apurado</h4><p class="r">Contas Estratégicas em Ponto Cego</p></div>
+                <div class="kpi"><h4 class="v">Não apurado</h4><p class="r">Auditoria de Contatos CRM</p></div>
                 <div class="kpi"><h4 class="v">KAM</h4><p class="r">Validador Humano (HITL)</p></div>
             </div>
             <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag2"></canvas></div>
@@ -383,47 +388,47 @@
 
         <div class="aba" data-aba="ag3">
             <h3 style="margin-top:0">Ciro: Priorização da Fila</h3>
-            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Aloca recursos limitados. A Lenovo possui 138 "vagas" para planos, porém 160+ contas sinalizadas. O Ciro foca no Maior Valor Esperado (LTV Retido).</p>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Aloca recursos limitados. O Ciro organiza uma pré-fila por critérios de risco e exposição. Contas sinalizadas não equivalem a capacidade operacional aprovada; a fila depende de validação do Diretor Regional.</p>
             
             <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-destaque);">
                 <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-destaque);">Última Análise Gerada</h4>
                 <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
             </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="kpi"><h4 class="v">138</h4><p class="r">Planos de Capacidade Máxima</p></div>
-                <div class="kpi"><h4 class="v">Risco/LTV</h4><p class="r">Base de Ordenação</p></div>
-                <div class="kpi"><h4 class="v">100%</h4><p class="r">Uso Eficiente de Vendas</p></div>
+                <div class="kpi"><h4 class="v">A confirmar</h4><p class="r">Capacidade Operacional</p></div>
+                <div class="kpi"><h4 class="v">Risco × Receita</h4><p class="r">Exposição Provisória</p></div>
+                <div class="kpi"><h4 class="v">Não apurado</h4><p class="r">Uso Eficiente de Vendas</p></div>
             </div>
             <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag3"></canvas></div>
         </div>
 
         <div class="aba" data-aba="ag4">
             <h3 style="margin-top:0">Diana: Playbook de Retenção</h3>
-            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Padroniza intervenções. Ela traduz as regras de ouro em rascunhos de plano prontos para a aprovação do Diretor Regional, sem contato direto com o cliente.</p>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Padroniza intervenções. A Diana propõe planos preliminares para validação do KAM. Ações e concessões dependem das aprovações aplicáveis; não há contato automático com o cliente.</p>
             
             <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-primaria);">
                 <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-primaria);">Última Análise Gerada</h4>
                 <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
             </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="kpi"><h4 class="v">-85%</h4><p class="r">Tempo em Desenho de Plano</p></div>
-                <div class="kpi"><h4 class="v">3</h4><p class="r">Playbooks Master Ativados</p></div>
-                <div class="kpi"><h4 class="v">Drafts</h4><p class="r">Rascunhos para o KAM</p></div>
+                <div class="kpi"><h4 class="v">Não apurado</h4><p class="r">Redução de Tempo</p></div>
+                <div class="kpi"><h4 class="v">3 opções</h4><p class="r">Playbooks Disponíveis (não ativados)</p></div>
+                <div class="kpi"><h4 class="v">Preliminar</h4><p class="r">Proposta sujeita à aprovação</p></div>
             </div>
             <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag4"></canvas></div>
         </div>
 
         <div class="aba" data-aba="ag5">
             <h3 style="margin-top:0">Elias: Mensuração e Aprendizado</h3>
-            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Audita o sucesso da intervenção. Contrasta a carteira que recebeu ação com o grupo de controle, retroalimentando o modelo preditivo.</p>
+            <p style="font-size:14px; color:var(--seg-texto)"><strong>Insight Executivo:</strong> Planeja a mensuração antes da execução e, quando houver dados válidos, compara resultados com um grupo de controle. NRR incremental ainda não foi apurado.</p>
             
             <div class="resposta-agente" style="background: var(--seg-base); padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 15px; border-left: 4px solid var(--seg-secundaria);">
                 <h4 style="margin-top:0; margin-bottom: 10px; font-size: 14px; color: var(--seg-secundaria);">Última Análise Gerada</h4>
                 <div class="conteudo-resposta" style="font-size: 13px; white-space: pre-wrap; color: var(--seg-texto);">Aguardando execução...</div>
             </div><div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="kpi"><h4 class="v">A/B</h4><p class="r">Grupo de Controle Mandatório</p></div>
-                <div class="kpi"><h4 class="v">ROI</h4><p class="r">Atribuição Auditável</p></div>
-                <div class="kpi"><h4 class="v">Drift</h4><p class="r">Feedback Contínuo do Modelo</p></div>
+                <div class="kpi"><h4 class="v">A/B</h4><p class="r">Controle a definir</p></div>
+                <div class="kpi"><h4 class="v">Pendente</h4><p class="r">NRR Incremental</p></div>
+                <div class="kpi"><h4 class="v">A avaliar</h4><p class="r">Saúde do Modelo</p></div>
             </div>
-            <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><canvas id="chart-ag5"></canvas></div>
+            <div style="height: 250px; margin-top:20px; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto;"><div style="padding:22px; border:1px dashed var(--seg-borda); font-size:14px; line-height:1.6;">NRR incremental: <strong>não apurado</strong>. O gráfico de comparação será apresentado somente após execução, observação e validação dos grupos de intervenção e controle.</div></div>
         </div>
     </section>
 
@@ -445,6 +450,8 @@
     var $ = function (id) { return document.getElementById(id); };
     var linhas = [];
     var resultado = null;
+    var relacionamentoPorConta = {};
+    var dataset3Status = "não carregado";
     var sessao = "painel-" + Math.random().toString(36).slice(2, 10);
     var espera = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
 
@@ -476,6 +483,7 @@
       $("etapas").classList.add("visivel");
       ["ler", "colunas", "treino", "fila"].forEach(function (e) { etapa(e, ""); });
       etapa("ler", "ativa");
+      resultado = null; relacionamentoPorConta = {}; dataset3Status = "não carregado";
       var leitor = new FileReader();
       leitor.onload = function (ev) {
         espera(60).then(function () {
@@ -491,6 +499,16 @@
           var nomeAba = wb.SheetNames.find(function (s) { return s.toLowerCase().indexOf("dataset 1") >= 0; }) || wb.SheetNames[0];
           var aba = wb.Sheets[nomeAba];
           linhas = XLSX.utils.sheet_to_json(aba, { defval: "", raw: true });
+          // v3: agrega a aba Dataset 3 no navegador, sem enviar registros brutos.
+          var nomeCRM = wb.SheetNames.find(function (n) { return /^dataset\s*3$/i.test(n.trim()); });
+          if (nomeCRM) {
+            var registrosCRM = XLSX.utils.sheet_to_json(wb.Sheets[nomeCRM], { defval: "", raw: true });
+            relacionamentoPorConta = agregarRelacionamento(registrosCRM);
+            dataset3Status = "carregado: " + registrosCRM.length + " registros";
+          } else {
+            dataset3Status = "aba Dataset 3 ausente (dados de relacionamento indisponíveis)";
+          }
+
           var faltam = ["account_id", "periodo", "churn_label", "receita_usd", "qtd_pedidos"]
             .filter(function (c) { return !(linhas[0] && c in linhas[0]); });
           if (faltam.length) throw new Error("faltam as colunas " + faltam.join(", ") + ". Use a aba Dataset 1 da base do case.");
@@ -664,24 +682,103 @@
       return agentes;
     }
 
+    // v3: Dataset 3 agregado por conta; não confundir campo vazio com zero.
+    function numeroOuNulo(v) {
+      if (v === "" || v === null || v === undefined) return null;
+      var n = Number(v); return Number.isFinite(n) ? n : null;
+    }
+    function agregarRelacionamento(registros) {
+      var grupos = Object.create(null);
+      registros.forEach(function (r) {
+        var id = String(r.account_id || "").trim();
+        if (!id) return;
+        if (!grupos[id]) grupos[id] = [];
+        grupos[id].push(r);
+      });
+      var saida = Object.create(null);
+      Object.keys(grupos).forEach(function (id) {
+        var arr = grupos[id].sort(function (a, b) { return String(a.periodo || "").localeCompare(String(b.periodo || "")); });
+        var recentes = arr.slice(-12);
+        function somar(chave) {
+          var validos = recentes.map(function (r) { return numeroOuNulo(r[chave]); }).filter(function (n) { return n !== null; });
+          return validos.length ? validos.reduce(function (a, b) { return a + b; }, 0) : null;
+        }
+        var ultimo = arr[arr.length - 1];
+        saida[id] = {
+          periodo_ultimo_registro: String(ultimo.periodo || "") || null,
+          periodos_disponiveis: arr.length,
+          periodos_considerados_12: recentes.length,
+          contatos_realizados_12_periodos: somar("contatos_realizados"),
+          dias_sem_contato_ultimo_registro: numeroOuNulo(ultimo.dias_sem_contato),
+          oportunidades_abertas_ultimo_registro: numeroOuNulo(ultimo.oportunidades_abertas),
+          oportunidades_ganhas_12_periodos: somar("oportunidades_ganhas"),
+          observacao: "Últimos 12 registros disponíveis; não representam necessariamente 12 meses corridos. Sem NPS, SLA, notas ou identificação de contatos-chave."
+        };
+      });
+      return saida;
+    }
+    function prepararContextoN8n() {
+      if (!resultado) return { modelo: null, contas: [], origem: "sem_resultado" };
+      var colunas = KovanModelo.COLUNAS || [];
+      var contas = (resultado.fila || []).map(function (c) {
+        var atributos = {};
+        colunas.forEach(function (nome, i) {
+          atributos[nome] = Array.isArray(c.features) ? c.features[i] : null;
+        });
+        return {
+          account_id: c.account_id, segment: c.segment, country: c.country,
+          posicao: c.posicao, escore: c.escore,
+          receita_usd: c.valor_em_risco, valor_esperado: c.valor_esperado,
+          churn: c.churn, meses_desde_ultima_compra: c.meses_desde_ultima_compra,
+          meses_com_compra_12m: c.meses_com_compra_12m,
+          features_modelo: atributos,
+          relacionamento: relacionamentoPorConta[c.account_id] || null,
+          relacionamento_disponivel: !!relacionamentoPorConta[c.account_id]
+        };
+      });
+      var modelo = {
+        contas_elegiveis: resultado.contas, auc: resultado.auc,
+        acertos_fila: resultado.acertos_fila,
+        tamanho_fila: contas.length, capacidade_ciclo: Number($("capacidade").value),
+        valor_esperado_fila: resultado.valor_esperado_fila,
+        pesos: resultado.pesos || {}, colunas: colunas,
+        dados_relacionamento: dataset3Status,
+        contas_com_relacionamento: contas.filter(function (c) { return c.relacionamento_disponivel; }).length,
+        metodologia: "Score de validação fora da amostra (5 folds). Pesos são globais e aplicados a features normalizadas; não são contribuições locais. receita_12m e ticket_medio em features_modelo são log1p dos valores monetários. churn é rótulo observado, não fator explicativo. valor_esperado = score x receita_12m; não equivale a perda comprovada. Não há série histórica de scores."
+      };
+      return { modelo: modelo, contas: contas, origem: "modelo_local_v3" };
+    }
+
     function chamar(pergunta, agentesAlvo) {
       var url = $("endpoint").value.trim();
       if (!url) return Promise.reject(new Error("Configure o endpoint do n8n no bloco 03."));
-      var c = resultado ? contexto() : { modelo: null, contas: [] };
+      var c = prepararContextoN8n();
+      // O teste de conectividade e as decisoes de aprovacao nao precisam da fila.
+      var testeConexao = /^Responda apenas: conex[aã]o ok\.?$/i.test(pergunta.trim());
+      var comandoAprovacao = /^(aprovar|aprovado|reprovar|reprovado|ajustar|revisar|confirmar|rejeitar)\b/i.test(pergunta.trim());
+      if (!testeConexao && !comandoAprovacao && (!c.contas.length || !c.modelo)) {
+        return Promise.reject(new Error("A fila do modelo nao esta disponivel para os agentes. Carregue a planilha e conclua o treinamento na etapa 01 antes de perguntar."));
+      }
+      var payload = {
+        sessionId: sessao,
+        pergunta: pergunta,
+        modelo_llm: modeloLLM(),
+        agentes_alvo: agentesAlvo,
+        intencao: (agentesAlvo || []).join(","),
+        modelo: c.modelo || {},
+        contas: c.contas,
+        planos: planos()
+      };
+      console.info("Kovan v4: envio ao n8n", {
+        origem: c.origem, totalContas: payload.contas.length,
+        camposModelo: Object.keys(payload.modelo),
+        primeiraConta: payload.contas[0] && payload.contas[0].account_id
+      });
       return fetch(url, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId: sessao,
-          pergunta: pergunta,
-          modelo_llm: modeloLLM(),
-          agentes_alvo: agentesAlvo,
-          intencao: (agentesAlvo || []).join(","),
-          modelo: c.modelo,
-          contas: c.contas,
-          planos: planos()
-        })
+        body: JSON.stringify(payload)
       }).then(function (r) {
-        if (!r.ok) throw new Error("O n8n respondeu " + r.status + ". Confira se o workflow está ativo, se a URL é a de produção e se a credencial OpenRouter está escolhida nos nós de modelo.");
+        if (!r.ok) throw new Error("O n8n respondeu " + r.status + ". Confira se o workflow esta ativo, se a URL e a de producao e se a credencial OpenRouter esta escolhida nos nos de modelo.");
         return r.json();
       }).then(function (j) { return Array.isArray(j) ? j[0] : j; });
     }
@@ -752,7 +849,7 @@
       
       var id = setInterval(function () {
         if (i < agentesAlvo.length - 1) { 
-            estadoAgente(agentesAlvo[i], "pronto"); 
+            estadoAgente(agentesAlvo[i], "aguardando");
             i++; 
             estadoAgente(agentesAlvo[i], "trabalhando"); 
             atualizarPlaceholderGerando(agentesAlvo[i]);
@@ -849,7 +946,11 @@
             if (abaId) {
                 var contentDiv = document.querySelector('.aba[data-aba="' + abaId + '"] .conteudo-resposta');
                 if (contentDiv) {
-                    contentDiv.textContent = a.texto || "Sem resposta.";
+                    var conteudo = String(a.texto || "Sem resposta.");
+                    if (!/^\s*Não acionado nesta pergunta\.?\s*$/i.test(conteudo)) {
+                      contentDiv.textContent = conteudo;
+                      contentDiv.dataset.origem = "resposta_n8n";
+                    }
                 }
             }
         });
@@ -889,6 +990,40 @@
     });
     document.querySelectorAll("#sugestoes button").forEach(function (b) {
       b.addEventListener("click", function () { perguntar(b.textContent); });
+    });
+    // Apresentação offline: textos históricos fornecidos durante os testes, sem simular execução.
+    $("demo-historico").addEventListener("click", function () {
+      var historico = {
+        ag1: "Conta: CLI052938 | Score: 20,5% (variação não disponível).\nPadrão de risco: dado insuficiente.\nCompras em 4 dos últimos 12 meses; 68 pedidos nos últimos 12 meses.\nQueda de receita trimestral registrada como 0 (não comprova estabilidade).\nReceita histórica: US$ 12.054.974,35. Valor esperado calculado: aproximadamente US$ 2.472.059 (score × receita; não é perda comprovada).\nLacunas: série histórica de scores, mix de produtos e detalhes de renovação contratual.\nPara o KAM validar: sazonalidade, fim de projeto e novas oportunidades.",
+        ag2: "Conta: CLI052938 | Saúde do relacionamento: indeterminada.\nNo registro histórico 2025-4, constavam 297 dias sem contato (não representa a situação atual).\nPatrocinador, compras e contatos técnicos: não identificados nos dados recebidos.\n39 oportunidades abertas no último registro e 21 ganhas nos três períodos considerados.\nDados de suporte, voz do cliente e frequência esperada de contato: indisponíveis.\nPara o KAM validar: importância territorial e eventual atraso de contato.",
+        ag5: "Conta: CLI052938 | Estágio: planejamento preliminar de mensuração.\nNorth Star: NRR incremental entre grupo de intervenção e controle — ainda não apurado.\nBaselines disponíveis: receita histórica US$ 12.054.974,35; meses com compra nos últimos 12 meses: 4.\nIndicadores futuros: receita, frequência de compra, contatos, custos e execução.\nExecução não comprovada nos dados recebidos; não há resultado de retenção validado.\nAprovações e fontes devem ser confirmadas antes da avaliação.\nLeitura: não avaliável neste estágio."
+      };
+      Object.keys(historico).forEach(function (aba) {
+        var el = document.querySelector('.aba[data-aba="' + aba + '"] .conteudo-resposta');
+        if (el) {
+          el.replaceChildren();
+          var selo = document.createElement("div");
+          selo.className = "historico-selo";
+          selo.textContent = "REGISTRO HISTÓRICO — NÃO É EXECUÇÃO AO VIVO";
+          el.appendChild(selo);
+          historico[aba].split("\n").forEach(function (linha) {
+            var item = document.createElement("div");
+            item.className = "historico-linha";
+            // Texto simples evita entidades HTML ao copiar o conteúdo.
+            // Cada campo continua separado visualmente em sua própria linha.
+            item.textContent = linha;
+            el.appendChild(item);
+          });
+          el.dataset.origem = "historico";
+        }
+      });
+      ["ag3", "ag4"].forEach(function (aba) {
+        var el = document.querySelector('.aba[data-aba="' + aba + '"] .conteudo-resposta');
+        if (el && !el.dataset.origem) el.textContent = "Não há transcrição integral validada carregada neste modo histórico. Esta etapa é apresentada conceitualmente, sem simular uma resposta.";
+      });
+      $("bloco-agentes-detalhe").hidden = false;
+      aviso_chat("Modo de apresentação: análises históricas de Atlas, Vera e Elias carregadas no dashboard. Nenhuma chamada ao n8n foi realizada.");
+      $("bloco-agentes-detalhe").scrollIntoView({behavior:"smooth",block:"start"});
     });
     trilha();
   })();
@@ -946,7 +1081,7 @@
           charts["chart-ag2"] = new Chart(document.getElementById("chart-ag2").getContext("2d"), {
             type: "doughnut",
             data: {
-              labels: ["Atividade Recente", "Zona Cega (> 3 meses sem compra)"],
+              labels: ["Compra há menos de 3 meses", "Sem compra há ≥ 3 meses (não é indicador CRM)"],
               datasets: [{
                 data: [comCompraRecente, semCompraLonga],
                 backgroundColor: ["#00B87C", "#FFB800"],
@@ -960,14 +1095,14 @@
         // Grafico 3: Ciro (Capacidade vs Fila)
         if (document.getElementById("chart-ag3") && r.fila) {
           destruirGrafico("chart-ag3");
-          var totalContas = r.contas || 1187;
+          var totalContas = Number(r.contas) || 0;
           var cap = r.fila.length;
-          var overflow = Math.max(0, Math.round(totalContas * 0.15) - cap);
+          // Sem estimar capacidade nem quantidade de sinalizados a partir de percentuais arbitrários.
 
           charts["chart-ag3"] = new Chart(document.getElementById("chart-ag3").getContext("2d"), {
             type: "bar",
             data: {
-              labels: ["Total Carteira", "Fila Priorizada (Capacidade)", "Demais em Monitoramento"],
+              labels: ["Total Carteira", "Fila gerada (não é capacidade aprovada)", "Demais em Monitoramento"],
               datasets: [{
                 label: "Volume de Contas",
                 data: [totalContas, cap, totalContas - cap],
@@ -984,7 +1119,7 @@
           });
         }
 
-        // Grafico 4: Diana (Distribuicao de Playbooks Estimada por Segmento)
+        // Grafico 4: Diana (distribuicao real de contas por segmento, NAO playbooks atribuídos)
         if (document.getElementById("chart-ag4") && r.fila) {
           destruirGrafico("chart-ag4");
           var segs = {};
@@ -998,7 +1133,7 @@
           charts["chart-ag4"] = new Chart(document.getElementById("chart-ag4").getContext("2d"), {
             type: "pie",
             data: {
-              labels: segLabels.map(function (l) { return "Playbook " + l; }),
+              labels: segLabels.map(function (l) { return "Segmento " + l; }),
               datasets: [{
                 data: segValues,
                 backgroundColor: ["#0084FF", "#E2231A", "#00B87C", "#FFB800", "#7B2CBF"],
@@ -1009,30 +1144,8 @@
           });
         }
 
-        // Grafico 5: Elias (Curva de Projecao de NRR)
-        if (document.getElementById("chart-ag5")) {
-          destruirGrafico("chart-ag5");
-          charts["chart-ag5"] = new Chart(document.getElementById("chart-ag5").getContext("2d"), {
-            type: "line",
-            data: {
-              labels: ["Mês 1", "Mês 2", "Mês 3", "Mês 4", "Mês 5", "Mês 6"],
-              datasets: [{
-                label: "NRR Grupo Intervenção (Diana)",
-                data: [100, 101, 102.5, 104, 105.2, 106.8],
-                borderColor: "#00B87C",
-                backgroundColor: "rgba(0,184,124,0.1)",
-                tension: 0.3
-              }, {
-                label: "NRR Grupo Controle Holdout (Sem Ação)",
-                data: [100, 97, 94.5, 92, 90.1, 88.5],
-                borderColor: "#E2231A",
-                backgroundColor: "rgba(226,35,26,0.1)",
-                tension: 0.3
-              }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-          });
-        }
+        // Elias: não desenhar NRR fictício. A visualização depende de dados reais de intervenção e controle.
+        destruirGrafico("chart-ag5");
       };
     })();
   </script>
